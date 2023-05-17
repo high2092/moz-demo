@@ -3,6 +3,8 @@ import { roomRepository } from './repository/RoomRepository';
 import { roomService } from './service/RoomService';
 import { quizRepository } from './repository/QuizRepository';
 import { quizService } from './service/QuizService';
+import { quizBundleService } from './service/QuizBundleService';
+import { quizBundleRepository } from './repository/QuizBundleRepository';
 
 export const handlers = [
   rest.get('/api/quiz', (req, res, ctx) => {
@@ -23,11 +25,14 @@ export const handlers = [
   }),
 
   rest.get('/api/quiz-bundle', (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json({ quizBundleList: [] }));
+    const quizBundleList = quizBundleRepository.findAll();
+    return res(ctx.status(200), ctx.json({ quizBundleList }));
   }),
 
-  rest.post('/api/quiz-bundle', (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(generateMockId()));
+  rest.post('/api/quiz-bundle', async (req, res, ctx) => {
+    const { title, quizzes } = await req.json();
+    const id = quizBundleService.createQuizBundle(title, quizzes);
+    return res(ctx.status(200), ctx.json(id));
   }),
 
   rest.get('/api/room', (req, res, ctx) => {
