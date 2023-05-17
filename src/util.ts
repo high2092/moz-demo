@@ -50,7 +50,7 @@ export async function httpDelete(path: string) {
   return response;
 }
 
-export const apiCaller = async (apiCall: () => Promise<Response>, dispatch: Dispatch) => {
+export const apiCaller = async (apiCall: () => Promise<Response>, dispatch?: Dispatch) => {
   const response = await apiCall();
 
   if (!response.ok) {
@@ -61,8 +61,9 @@ export const apiCaller = async (apiCall: () => Promise<Response>, dispatch: Disp
 
   const data = await extractApiData(response);
   if (!data) return;
-  const { socket } = data;
-  dispatch(receiveMessage(socket));
+  if (dispatch && data.socket) {
+    dispatch(receiveMessage(data.socket));
+  }
 
   return data;
 };

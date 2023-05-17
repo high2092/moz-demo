@@ -1,26 +1,25 @@
 import * as S from './CreateQuizBundleModal.style';
-import { useAppSelector } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 import { PreparedModalProps } from '../type/modal';
 import { CenteredModal } from './Modal';
-import { httpPost } from '../util';
+import { apiCaller, httpPost } from '../util';
 import { FieldValues, useForm } from 'react-hook-form';
+import { addQuizBundle } from '../features/mozSlice';
 
 export const CreateQuizBundleModal = ({ zIndex }: PreparedModalProps) => {
   return <CenteredModal content={<CreateQuizBundleModalContent />} zIndex={zIndex} />;
 };
 
 function CreateQuizBundleModalContent() {
+  const dispatch = useAppDispatch();
   const { quizzes } = useAppSelector((state) => state.moz);
   const { register, handleSubmit } = useForm();
 
   const selectedQuizList = Object.values(quizzes).filter(({ selected }) => selected); // TODO: createSelector
 
   const handleQuizCreateQuizBundle = async ({ title }: FieldValues) => {
-    const response = await httpPost('api/quiz-bundle', { title, quizzes: selectedQuizList.map(({ id }) => id) });
-    if (!response.ok) {
-      console.error(response.statusText);
-      return;
-    }
+    const id = await apiCaller(() => httpPost('api/quiz-bundle', { title, quizzes: selectedQuizList.map(({ id }) => id) }));
+    dispatch(addQuizBundle({ id, title, quizList: selectedQuizList }));
   };
 
   return (

@@ -80,6 +80,11 @@ export const mozSlice = createSlice({
       delete state.quizzes[action.payload];
     },
 
+    addQuizBundle(state, action: PayloadAction<QuizBundle>) {
+      const quizBundle = action.payload;
+      state.quizBundles[quizBundle.id] = quizBundle;
+    },
+
     toggleSelectQuiz(state, action: PayloadAction<number>) {
       const target = state.quizzes[action.payload];
       target.selected = !target.selected;
@@ -106,4 +111,4 @@ export const mozSlice = createSlice({
   },
 });
 
-export const { initSocket, receiveMessage, setIsReady, fetchQuiz, addQuiz, removeQuiz, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle } = mozSlice.actions;
+export const { initSocket, receiveMessage, setIsReady, fetchQuiz, addQuiz, removeQuiz, addQuizBundle, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle } = mozSlice.actions;
