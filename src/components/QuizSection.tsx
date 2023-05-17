@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import * as S from './QuizSection.style';
 import { convertPayloadToChat, httpPost, sendMessage } from '../util';
-import { ready, unready } from '../features/mozSlice';
+import { setIsReady } from '../features/mozSlice';
 import { openModal } from '../features/modalSlice';
 import { ModalTypes } from '../type/modal';
 import { Quiz, QuizTypes } from '../type/quiz';
@@ -11,7 +11,7 @@ import { ChattingInput } from './ChattingInput';
 
 export const QuizRoomMainSection = () => {
   const dispatch = useAppDispatch();
-  const { chatList, isReady, currentRoundQuiz } = useAppSelector((state) => state.moz);
+  const { chatList, currentRoundQuiz } = useAppSelector((state) => state.moz);
   const chattingBoxRef = useRef(null);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export const QuizRoomMainSection = () => {
   return (
     <S.QuizRoomMainSection>
       <S.QuizRoomMainSectionTop>
-        {isReady ? <UnreadyButton /> : <ReadyButton />}
+        <ReadyButton />
         <button onClick={handleAddQuizButtonClick}>문제 추가</button>
       </S.QuizRoomMainSectionTop>
       <QuizSection quiz={currentRoundQuiz} />
@@ -70,6 +70,7 @@ function QuizSection({ quiz }: QuizSectionProps) {
 
 function ReadyButton() {
   const dispatch = useAppDispatch();
+  const { isReady } = useAppSelector((state) => state.moz);
 
   const handleReadyButtonClick = async () => {
     const response = await httpPost('api/game/ready');
@@ -79,25 +80,8 @@ function ReadyButton() {
       return;
     }
 
-    dispatch(ready());
+    dispatch(setIsReady(!isReady));
   };
 
-  return <button onClick={handleReadyButtonClick}>READY</button>;
-}
-
-function UnreadyButton() {
-  const dispatch = useAppDispatch();
-
-  const handleUnreadyButtonClick = async () => {
-    const response = await httpPost('api/game/unready');
-
-    if (!response.ok) {
-      console.error(response.statusText);
-      return;
-    }
-
-    dispatch(unready());
-  };
-
-  return <button onClick={handleUnreadyButtonClick}>UNREADY</button>;
+  return <button onClick={handleReadyButtonClick}>{isReady ? 'UNREADY' : 'READY'}</button>;
 }

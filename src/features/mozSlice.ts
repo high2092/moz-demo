@@ -58,12 +58,8 @@ export const mozSlice = createSlice({
       }
     },
 
-    ready(state) {
-      state.isReady = true;
-    },
-
-    unready(state) {
-      state.isReady = false;
+    setIsReady(state, action: PayloadAction<boolean>) {
+      state.isReady = action.payload;
     },
 
     fetchQuiz(state, action: PayloadAction<Quiz[]>) {
@@ -107,4 +103,4 @@ export const mozSlice = createSlice({
   },
 });
 
-export const { initSocket, receiveMessage, ready, unready, fetchQuiz, addQuiz, removeQuiz, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle } = mozSlice.actions;
+export const { initSocket, receiveMessage, setIsReady, fetchQuiz, addQuiz, removeQuiz, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle } = mozSlice.actions;
