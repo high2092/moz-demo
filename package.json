@@ -23,5 +23,8 @@
     "@types/node": "20.0.0",
     "@types/react": "18.2.5",
     "typescript": "5.0.4"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
