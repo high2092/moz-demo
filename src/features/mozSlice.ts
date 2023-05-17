@@ -54,6 +54,7 @@ export const mozSlice = createSlice({
           case SocketPayloadTypes.GAME_OVER: {
             state.isReady = false;
             state.chatList = [...state.chatList, payload];
+            state.currentRoundQuiz = null;
             break;
           }
         }
