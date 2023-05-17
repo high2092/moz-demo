@@ -7,6 +7,7 @@ import { quizBundleService } from './service/QuizBundleService';
 import { quizBundleRepository } from './repository/QuizBundleRepository';
 import { User } from '../type/user';
 import { memberRepository } from './repository/MemberRepository';
+import { memberService } from './service/MemberService';
 
 export const handlers = [
   rest.get('/api/quiz', (req, res, ctx) => {
@@ -49,27 +50,43 @@ export const handlers = [
   }),
 
   rest.get('/api/room/:id', (req, res, ctx) => {
+    const memberId = getPrincipal();
+    const member = memberRepository.findById(memberId);
+
     const id = Number(req.params.id);
     const { users } = roomService.findRoom(id);
+
+    member.isReady = false;
+    member.roomId = id;
+
     return res(ctx.status(200), ctx.json(users));
   }),
 
   rest.post('/api/game/ready', (req, res, ctx) => {
-    return res(ctx.status(200));
+    const memberId = getPrincipal();
+    const member = memberRepository.findById(memberId);
+
+    const room = roomRepository.findById(member.roomId);
+    if (room.status === 'playing') {
+      return res(ctx.status(409));
+    }
+
+    memberService.toggleReady(memberId);
+
+    return res(ctx.status(200), ctx.json({ ready: member.isReady }));
   }),
 
-  rest.post('/api/game/unready', (req, res, ctx) => {
-    return res(ctx.status(200));
-  }),
+  rest.post('/api/game/add-quiz', async (req, res, ctx) => {
+    const memberId = getPrincipal();
+    const member = memberRepository.findById(memberId);
+    const roomId = member.roomId;
 
-  rest.post('/api/game/add-quiz', (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(generateMockId()));
+    const { quizList } = await req.json();
+    roomService.addQuizzes(roomId, quizList);
+
+    return res(ctx.status(200));
   }),
 ];
-
-function generateMockId() {
-  return Math.floor(Math.random() * 20_000);
-}
 
 function getPrincipal() {
   return 1;

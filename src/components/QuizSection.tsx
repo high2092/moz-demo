@@ -80,7 +80,8 @@ function ReadyButton() {
       return;
     }
 
-    dispatch(setIsReady(!isReady));
+    const { ready } = await response.json();
+    dispatch(setIsReady(ready));
   };
 
   return <button onClick={handleReadyButtonClick}>{isReady ? 'UNREADY' : 'READY'}</button>;

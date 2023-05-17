@@ -19,6 +19,10 @@ class QuizRepository {
     return Object.values(this.quizzes);
   }
 
+  findById(id: number) {
+    return this.quizzes[id];
+  }
+
   deleteById(id: number) {
     delete this.quizzes[id];
   }

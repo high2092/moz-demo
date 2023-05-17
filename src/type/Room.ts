@@ -1,3 +1,4 @@
+import { Quiz } from './quiz';
 import { User } from './user';
 
 export interface Room {
@@ -5,4 +6,6 @@ export interface Room {
   name: string;
   capacity: number;
   users: User[];
+  quizList: Quiz[];
+  status: 'wait' | 'playing';
 }
