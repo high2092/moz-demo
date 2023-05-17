@@ -129,6 +129,15 @@ export const handlers = [
       }
     }
   }),
+
+  rest.post('/api/load', async (req, res, ctx) => {
+    const { quizList, quizBundleList } = await req.json();
+
+    quizList.forEach(({ type, question, answers }) => quizService.createQuiz(type, question, answers));
+    quizBundleList.forEach(({ title, quizzes }) => quizBundleService.createQuizBundle(title, quizzes));
+
+    return res(ctx.status(200));
+  }),
 ];
 
 function getPrincipal() {

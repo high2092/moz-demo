@@ -60,7 +60,7 @@ export const apiCaller = async (apiCall: () => Promise<Response>, dispatch?: Dis
   }
 
   const data = await extractApiData(response);
-  if (!data) return;
+  if (!data) return null;
   if (dispatch && data.socket) {
     dispatch(receiveMessage(data.socket));
   }
@@ -83,4 +83,28 @@ export function dangerConcat<T>(origin: T[], data: T | T[]) {
     origin.push(data);
   }
   return;
+}
+
+export function downloadFile(content: string) {
+  const element = document.createElement('a');
+  const file = new Blob([content], { type: 'text/plain' });
+  element.href = URL.createObjectURL(file);
+  element.download = `${getCurrentDateTime()}.moz`;
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+}
+
+function getCurrentDateTime() {
+  const now = new Date();
+
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
+
+  return `${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}`;
 }
