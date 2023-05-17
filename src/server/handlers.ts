@@ -5,6 +5,8 @@ import { quizRepository } from './repository/QuizRepository';
 import { quizService } from './service/QuizService';
 import { quizBundleService } from './service/QuizBundleService';
 import { quizBundleRepository } from './repository/QuizBundleRepository';
+import { User } from '../type/user';
+import { memberRepository } from './repository/MemberRepository';
 
 export const handlers = [
   rest.get('/api/quiz', (req, res, ctx) => {
@@ -68,3 +70,14 @@ export const handlers = [
 function generateMockId() {
   return Math.floor(Math.random() * 20_000);
 }
+
+function getPrincipal() {
+  return 1;
+}
+
+function init() {
+  const member: User = { name: 'guest' };
+  memberRepository.save(member);
+}
+
+init();

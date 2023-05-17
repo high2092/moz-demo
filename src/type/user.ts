@@ -1,1 +1,7 @@
-export type User = number; // TODO
+export interface User {
+  id?: number;
+  name: string;
+
+  roomId?: number;
+  isReady?: boolean;
+}
