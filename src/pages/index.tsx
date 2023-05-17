@@ -49,10 +49,6 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    console.log(roomList);
-  }, [roomList]);
-
-  useEffect(() => {
     httpGetQuizList().then((quizList) => dispatch(fetchQuiz(quizList)));
   }, []);
 

@@ -9,7 +9,6 @@ const ROUND_SKIP_THRESHOLD = 5;
 class GameService {
   compare(room: Room, answer: string, member: User) {
     const score = calculateScore(room, answer);
-    console.log(score);
     member.score += score;
 
     const payloads: SocketPayload[] = [];
@@ -43,7 +42,6 @@ class GameService {
 
 function calculateScore(room: Room, userAnswer: string) {
   const { answers } = getCurrentRoundQuiz(room);
-  console.log(answers, userAnswer);
   for (const { score, answer } of answers) {
     if (userAnswer === answer) return score;
   }
