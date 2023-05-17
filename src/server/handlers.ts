@@ -10,6 +10,8 @@ import { memberRepository } from './repository/MemberRepository';
 import { memberService } from './service/MemberService';
 import { SocketPayload, SocketPayloadTypes } from '../type/socket';
 import { ApiError } from '../error/api/ApiError';
+import { gameService } from './service/GameService';
+import { dangerConcat } from '../util';
 
 export const handlers = [
   rest.get('/api/quiz', (req, res, ctx) => {
@@ -112,10 +114,19 @@ export const handlers = [
     const payload: SocketPayload = await req.json();
     const { type, body } = payload;
 
-    if (type === SocketPayloadTypes.LOCAL_CHAT) {
-      payload.from = member.name;
-      payloads.push(payload);
-      return res(ctx.status(200), ctx.json({ socket: payloads }));
+    switch (type) {
+      case SocketPayloadTypes.LOCAL_CHAT: {
+        const room = roomRepository.findById(member.roomId);
+
+        if (room && room.status === 'playing') {
+          dangerConcat(payloads, gameService.compare(room, body, member));
+          return res(ctx.status(200), ctx.json({ socket: payloads }));
+        } else {
+          payload.from = member.name;
+          payloads.push(payload);
+          return res(ctx.status(200), ctx.json({ socket: payloads }));
+        }
+      }
     }
   }),
 ];

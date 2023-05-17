@@ -59,11 +59,21 @@ export const apiCaller = async (apiCall: () => Promise<Response>, dispatch: Disp
     return;
   }
 
-  const { socket } = await response.json();
+  const data = await extractApiData(response);
+  if (!data) return;
+  const { socket } = data;
   dispatch(receiveMessage(socket));
 
-  return response;
+  return data;
 };
+
+async function extractApiData(response: Response) {
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
 
 export function dangerConcat<T>(origin: T[], data: T | T[]) {
   if (Array.isArray(data)) {

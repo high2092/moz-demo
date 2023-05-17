@@ -4,4 +4,5 @@ export interface User {
 
   roomId?: number;
   isReady?: boolean;
+  score?: number;
 }

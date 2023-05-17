@@ -7,6 +7,8 @@ import { quizRepository } from '../repository/QuizRepository';
 import { roomRepository } from '../repository/RoomRepository';
 import { AlreadyPlayingError } from '../../error/api/AlreadyPlayingError';
 import { EmptyQuizListError } from '../../error/api/EmptyQuizListError';
+import { getCurrentRoundQuiz } from '../utils/room';
+import { createRoundInfoSocketPayloads } from '../utils/socket';
 
 class RoomService {
   createRoom(name: string, capacity: number) {
@@ -57,19 +59,6 @@ class RoomService {
     dangerConcat(payloads, createRoundInfoSocketPayloads(room));
     return payloads;
   }
-}
-
-function getCurrentRounQuiz(room: Room) {
-  return room.quizList[room.round - 1];
-}
-
-function createRoundInfoSocketPayloads(room: Room) {
-  const { question } = getCurrentRounQuiz(room);
-
-  const payloads: SocketPayload[] = [];
-  payloads.push(createSocketPayload(SocketPayloadTypes.SYSTEM, `라운드 ${room.round} 시작!`));
-  payloads.push(createSocketPayload(SocketPayloadTypes.ROUND_INFO, question));
-  return payloads;
 }
 
 export const roomService = new RoomService();
