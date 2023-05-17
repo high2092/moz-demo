@@ -51,13 +51,11 @@ export const handlers = [
 
   rest.get('/api/room/:id', (req, res, ctx) => {
     const memberId = getPrincipal();
-    const member = memberRepository.findById(memberId);
-
     const id = Number(req.params.id);
-    const { users } = roomService.findRoom(id);
 
-    member.isReady = false;
-    member.roomId = id;
+    roomService.enter(id, memberId);
+
+    const { users } = roomService.findRoom(id);
 
     return res(ctx.status(200), ctx.json(users));
   }),
@@ -83,6 +81,17 @@ export const handlers = [
 
     const { quizList } = await req.json();
     roomService.addQuizzes(roomId, quizList);
+
+    return res(ctx.status(200));
+  }),
+
+  rest.post('/api/game/start', (req, res, ctx) => {
+    const memberId = getPrincipal();
+    const member = memberRepository.findById(memberId);
+    const roomId = member.roomId;
+    if (!roomService.checkAllReady(roomId)) {
+      return res(ctx.status(409));
+    }
 
     return res(ctx.status(200));
   }),

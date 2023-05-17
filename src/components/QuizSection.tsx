@@ -25,9 +25,19 @@ export const QuizRoomMainSection = () => {
     dispatch(openModal(ModalTypes.ADD_QUIZ));
   };
 
+  const handleStartButtonClick = async () => {
+    const response = await httpPost('api/game/start');
+
+    if (!response.ok) {
+      alert('준비가 완료되지 않은 유저가 있어요.');
+      return;
+    }
+  };
+
   return (
     <S.QuizRoomMainSection>
       <S.QuizRoomMainSectionTop>
+        <button onClick={handleStartButtonClick}>게임 시작</button>
         <ReadyButton />
         <button onClick={handleAddQuizButtonClick}>문제 추가</button>
       </S.QuizRoomMainSectionTop>
