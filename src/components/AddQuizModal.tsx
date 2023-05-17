@@ -26,7 +26,7 @@ function AddQuizModalContent() {
   const handleApplyButtonClick = async () => {
     const quizList = addQuizList.reduce((acc, { id, quizList }) => {
       if (quizList) return acc.concat(quizList.map(({ id }) => id));
-      return id;
+      return acc.concat(id);
     }, []);
 
     const response = await httpPost('api/game/add-quiz', { quizList });
