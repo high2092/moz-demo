@@ -24,9 +24,10 @@ interface RoomUserProps {
 }
 
 const RoomUser = ({ user }: RoomUserProps) => {
+  const { name } = user;
   return (
     <S.RoomUser>
-      <div>{user}</div>
+      <div>{name}</div>
     </S.RoomUser>
   );
 };
