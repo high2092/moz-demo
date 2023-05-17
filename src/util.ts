@@ -28,12 +28,12 @@ export function convertPayloadToChat({ type, body, from }: SocketPayload) {
   }
 }
 
-export async function httpGetApi(path: string) {
+export async function httpGet(path: string) {
   const response = await fetch(`${HOST}/${path}`, { method: 'GET', credentials: 'include' });
   return response;
 }
 
-export async function httpPostApi(path: string, payload?: Record<string, any>) {
+export async function httpPost(path: string, payload?: Record<string, any>) {
   const response = await fetch(`${HOST}/${path}`, {
     method: 'POST',
     credentials: 'include',
@@ -45,7 +45,7 @@ export async function httpPostApi(path: string, payload?: Record<string, any>) {
   return response;
 }
 
-export async function httpDeleteApi(path: string) {
+export async function httpDelete(path: string) {
   const response = await fetch(`${HOST}/${path}`, { method: 'DELETE', credentials: 'include' });
   return response;
 }

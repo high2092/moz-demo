@@ -3,7 +3,7 @@ import { openModal } from '../features/modalSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ModalTypes, PreparedModalProps } from '../type/modal';
 import { CenteredModal } from './Modal';
-import { httpDeleteApi } from '../util';
+import { httpDelete } from '../util';
 import { removeQuiz, selectAll, toggleSelectQuiz } from '../features/mozSlice';
 import { QuizBundleListModalContent } from './QuizBundleListModal';
 
@@ -32,7 +32,7 @@ export const QuizListModalContent = () => {
   };
 
   const handleDeleteButtonClick = async (id: number) => {
-    const response = await httpDeleteApi(`quiz/${id}`);
+    const response = await httpDelete(`api/quiz/${id}`);
     if (!response.ok) {
       console.error(response.statusText);
       return;

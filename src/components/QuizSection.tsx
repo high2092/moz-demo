@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import * as S from './QuizSection.style';
-import { convertPayloadToChat, httpPostApi, sendMessage } from '../util';
+import { convertPayloadToChat, httpPost, sendMessage } from '../util';
 import { ready, unready } from '../features/mozSlice';
 import { openModal } from '../features/modalSlice';
 import { ModalTypes } from '../type/modal';
@@ -72,7 +72,7 @@ function ReadyButton() {
   const dispatch = useAppDispatch();
 
   const handleReadyButtonClick = async () => {
-    const response = await httpPostApi('game/ready');
+    const response = await httpPost('api/game/ready');
 
     if (!response.ok) {
       console.error(response.statusText);
@@ -89,7 +89,7 @@ function UnreadyButton() {
   const dispatch = useAppDispatch();
 
   const handleUnreadyButtonClick = async () => {
-    const response = await httpPostApi('game/unready');
+    const response = await httpPost('api/game/unready');
 
     if (!response.ok) {
       console.error(response.statusText);

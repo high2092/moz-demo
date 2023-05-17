@@ -3,13 +3,10 @@ import * as S from '../../styles/Room.style';
 import { useEffect, useState } from 'react';
 import { RoomUserSection } from '../../components/RoomUserSection';
 import { QuizRoomMainSection } from '../../components/QuizSection';
-import { cutUserListInHalf } from '../../util';
+import { cutUserListInHalf, httpGet } from '../../util';
 
 const httpGetRoom = async (id: number) => {
-  const response = await fetch(`http://localhost:8080/room/${id}`, {
-    method: 'GET',
-    credentials: 'include',
-  });
+  const response = await httpGet(`api/room/${id}`);
 
   if (!response.ok) return;
 

@@ -3,19 +3,20 @@ import { useEffect, useState } from 'react';
 import { openModal } from '../features/modalSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ModalTypes } from '../type/modal';
-import { convertPayloadToChat, httpGetApi, sendMessage } from '../util';
+import { convertPayloadToChat, httpGet, httpPost, sendMessage } from '../util';
 import { fetchQuiz, fetchQuizBundleList, initSocket, receiveMessage } from '../features/mozSlice';
 import { useRouter } from 'next/router';
 import { ChattingInput } from '../components/ChattingInput';
 
 const httpGetRoomList = async () => {
-  const response = await fetch('http://localhost:8080/room', { method: 'GET', credentials: 'include' });
+  const response = await httpGet('api/room');
   const { rooms } = await response.json();
+
   return rooms;
 };
 
 const httpGetQuizList = async () => {
-  const response = await httpGetApi('quiz');
+  const response = await httpGet('api/quiz');
   if (!response.ok) {
     console.error(response.statusText);
     return null;
@@ -26,7 +27,7 @@ const httpGetQuizList = async () => {
 };
 
 async function httpGetQuizBundleList() {
-  const response = await httpGetApi('quiz-bundle');
+  const response = await httpGet('api/quiz-bundle');
   if (!response.ok) {
     console.error(response.statusText);
     return null;
@@ -42,22 +43,6 @@ const Home = () => {
   const router = useRouter();
 
   const [roomList, setRoomList] = useState([]);
-
-  useEffect(() => {
-    if (socket !== null) return;
-    const ws = new WebSocket('ws://localhost:8080/my-handler');
-    ws.onopen = () => {
-      console.log('WebSocket connection established.');
-    };
-    ws.onmessage = (event) => {
-      console.log('Message received:', event.data);
-      dispatch(receiveMessage(JSON.parse(event.data)));
-    };
-    ws.onclose = () => {
-      console.log('WebSocket connection closed.');
-    };
-    dispatch(initSocket(ws));
-  }, []);
 
   useEffect(() => {
     httpGetRoomList().then(setRoomList);
@@ -81,14 +66,7 @@ const Home = () => {
       capacity: 4,
     };
 
-    const response = await fetch('http://localhost:8080/room', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(roomProfile),
-    });
+    const response = await httpPost('api/room', roomProfile);
 
     if (!response.ok) {
       return;

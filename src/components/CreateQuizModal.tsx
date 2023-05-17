@@ -1,4 +1,4 @@
-import { httpPostApi } from '../util';
+import { httpPost } from '../util';
 import { PreparedModalProps } from '../type/modal';
 import { Quiz, QuizType, QuizTypes } from '../type/quiz';
 import * as S from './CreateQuizModal.style';
@@ -34,7 +34,7 @@ function CreateQuizModalContent() {
     const { consonant } = formData;
     const answers = [formData.defaultAnswer, ...formData.answers];
     const quiz: Quiz = { type: quizType, question: getQuestion(quizType, { consonant, videoId }), answers };
-    const response = await httpPostApi('quiz', quiz);
+    const response = await httpPost('api/quiz', quiz);
 
     if (!response.ok) {
       console.error(response.statusText);

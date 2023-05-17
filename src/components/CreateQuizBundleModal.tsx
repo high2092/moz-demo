@@ -2,7 +2,7 @@ import * as S from './CreateQuizBundleModal.style';
 import { useAppSelector } from '../store';
 import { PreparedModalProps } from '../type/modal';
 import { CenteredModal } from './Modal';
-import { httpPostApi } from '../util';
+import { httpPost } from '../util';
 import { FieldValues, useForm } from 'react-hook-form';
 
 export const CreateQuizBundleModal = ({ zIndex }: PreparedModalProps) => {
@@ -16,7 +16,7 @@ function CreateQuizBundleModalContent() {
   const selectedQuizList = Object.values(quizzes).filter(({ selected }) => selected); // TODO: createSelector
 
   const handleQuizCreateQuizBundle = async ({ title }: FieldValues) => {
-    const response = await httpPostApi('quiz-bundle', { title, quizzes: selectedQuizList.map(({ id }) => id) });
+    const response = await httpPost('api/quiz-bundle', { title, quizzes: selectedQuizList.map(({ id }) => id) });
     if (!response.ok) {
       console.error(response.statusText);
       return;

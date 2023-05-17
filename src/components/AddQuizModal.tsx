@@ -4,7 +4,7 @@ import { CenteredModal } from './Modal';
 import { useAppSelector } from '../store';
 import { useState } from 'react';
 import { Quiz } from '../type/quiz';
-import { httpPostApi } from '../util';
+import { httpPost } from '../util';
 
 export const AddQuizModal = ({ zIndex }: PreparedModalProps) => {
   return <CenteredModal content={<AddQuizModalContent />} zIndex={zIndex} />;
@@ -29,7 +29,7 @@ function AddQuizModalContent() {
       return id;
     }, []);
 
-    const response = await httpPostApi('game/add-quiz', { quizList });
+    const response = await httpPost('api/game/add-quiz', { quizList });
 
     if (!response.ok) {
       console.error(response.statusText);
