@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react';
-import { sendMessage } from '../util';
-import { useAppSelector } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
+import { createSocketPayload, httpPost } from '../util';
+import { receiveMessage } from '../features/mozSlice';
 
 export const ChattingInput = () => {
   const { socket } = useAppSelector((state) => state.moz);
+  const dispatch = useAppDispatch();
 
   const [chattingInputValue, setChattingInputValue] = useState('');
 
@@ -12,12 +14,20 @@ export const ChattingInput = () => {
     setChattingInputValue(target.value);
   };
 
-  const handleChattingInputKeyDown = (e: React.KeyboardEvent) => {
+  const handleChattingInputKeyDown = async (e: React.KeyboardEvent) => {
     if (e.key !== 'Enter') return;
     if (chattingInputValue.length === 0) return;
     if (e.nativeEvent.isComposing) return;
 
-    sendMessage({ type: 'chat/local', body: chattingInputValue }, socket);
+    const response = await httpPost('api/socket', createSocketPayload('chat/local', chattingInputValue));
+
+    if (!response.ok) {
+      console.error(response.statusText);
+      return;
+    }
+
+    const { socket } = await response.json();
+    dispatch(receiveMessage(socket));
 
     setChattingInputValue('');
   };

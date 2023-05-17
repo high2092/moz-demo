@@ -8,6 +8,7 @@ import { quizBundleRepository } from './repository/QuizBundleRepository';
 import { User } from '../type/user';
 import { memberRepository } from './repository/MemberRepository';
 import { memberService } from './service/MemberService';
+import { SocketPayload, SocketPayloadTypes } from '../type/socket';
 
 export const handlers = [
   rest.get('/api/quiz', (req, res, ctx) => {
@@ -94,6 +95,19 @@ export const handlers = [
     }
 
     return res(ctx.status(200));
+  }),
+
+  rest.post('/api/socket', async (req, res, ctx) => {
+    const memberId = getPrincipal();
+    const member = memberRepository.findById(memberId);
+
+    const payload: SocketPayload = await req.json();
+    const { type, body } = payload;
+
+    if (type === SocketPayloadTypes.LOCAL_CHAT) {
+      payload.from = member.name;
+      return res(ctx.status(200), ctx.json({ socket: payload }));
+    }
   }),
 ];
 

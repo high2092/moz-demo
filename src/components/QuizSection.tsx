@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import * as S from './QuizSection.style';
-import { convertPayloadToChat, httpPost, sendMessage } from '../util';
+import { convertPayloadToChat, httpPost } from '../util';
 import { setIsReady } from '../features/mozSlice';
 import { openModal } from '../features/modalSlice';
 import { ModalTypes } from '../type/modal';

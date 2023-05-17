@@ -1,15 +1,9 @@
 import { HOST } from '../constants';
-import { SocketPayload } from './type/socket';
+import { SocketPayload, SocketPayloadType } from './type/socket';
 import { User } from './type/user';
 
 export function cutUserListInHalf(users: User[]) {
   return [users.filter((user, idx) => idx % 2 === 0), users.filter((user, idx) => idx % 2 === 1)];
-}
-
-export function sendMessage(payload: SocketPayload, socket: WebSocket) {
-  if (socket !== null && socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify(payload));
-  }
 }
 
 export function convertPayloadToChat({ type, body, from }: SocketPayload) {
@@ -26,6 +20,10 @@ export function convertPayloadToChat({ type, body, from }: SocketPayload) {
       return `[${type}] ${from}: ${body}`;
     }
   }
+}
+
+export function createSocketPayload(type: SocketPayloadType, body: string, from?: string): SocketPayload {
+  return { type, body, from };
 }
 
 export async function httpGet(path: string) {

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { openModal } from '../features/modalSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ModalTypes } from '../type/modal';
-import { convertPayloadToChat, httpGet, httpPost, sendMessage } from '../util';
+import { convertPayloadToChat, httpGet, httpPost } from '../util';
 import { fetchQuiz, fetchQuizBundleList, initSocket, receiveMessage } from '../features/mozSlice';
 import { useRouter } from 'next/router';
 import { ChattingInput } from '../components/ChattingInput';
