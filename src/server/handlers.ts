@@ -101,12 +101,15 @@ export const handlers = [
     const memberId = getPrincipal();
     const member = memberRepository.findById(memberId);
 
+    const payloads: SocketPayload[] = [];
+
     const payload: SocketPayload = await req.json();
     const { type, body } = payload;
 
     if (type === SocketPayloadTypes.LOCAL_CHAT) {
       payload.from = member.name;
-      return res(ctx.status(200), ctx.json({ socket: payload }));
+      payloads.push(payload);
+      return res(ctx.status(200), ctx.json({ socket: payloads }));
     }
   }),
 ];

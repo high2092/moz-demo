@@ -34,26 +34,28 @@ export const mozSlice = createSlice({
       state.socket = action.payload;
     },
 
-    receiveMessage(state, action: PayloadAction<SocketPayload>) {
-      const payload = action.payload;
-      switch (payload.type) {
-        case SocketPayloadTypes.SYSTEM:
-        case SocketPayloadTypes.LOCAL_CHAT: {
-          state.chatList = [...state.chatList, action.payload];
-          break;
-        }
-        case SocketPayloadTypes.MUSIC_QUIZ: {
-          state.currentRoundQuiz = { type: QuizTypes.MUSIC, question: action.payload.body };
-          break;
-        }
-        case SocketPayloadTypes.ROUND_INFO: {
-          state.currentRoundQuiz = { type: QuizTypes.CONSONANT, question: action.payload.body };
-          break;
-        }
-        case SocketPayloadTypes.GAME_OVER: {
-          state.isReady = false;
-          state.chatList = [...state.chatList, action.payload];
-          break;
+    receiveMessage(state, action: PayloadAction<SocketPayload[]>) {
+      const payloads = action.payload;
+      for (const payload of payloads) {
+        switch (payload.type) {
+          case SocketPayloadTypes.SYSTEM:
+          case SocketPayloadTypes.LOCAL_CHAT: {
+            state.chatList = [...state.chatList, payload];
+            break;
+          }
+          case SocketPayloadTypes.MUSIC_QUIZ: {
+            state.currentRoundQuiz = { type: QuizTypes.MUSIC, question: payload.body };
+            break;
+          }
+          case SocketPayloadTypes.ROUND_INFO: {
+            state.currentRoundQuiz = { type: QuizTypes.CONSONANT, question: payload.body };
+            break;
+          }
+          case SocketPayloadTypes.GAME_OVER: {
+            state.isReady = false;
+            state.chatList = [...state.chatList, payload];
+            break;
+          }
         }
       }
     },
