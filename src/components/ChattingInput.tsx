@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
-import { createSocketPayload, httpPost } from '../util';
-import { receiveMessage } from '../features/mozSlice';
+import { createSocketPayload, httpPost, socketCaller } from '../util';
 
 export const ChattingInput = () => {
   const { socket } = useAppSelector((state) => state.moz);
@@ -19,15 +18,7 @@ export const ChattingInput = () => {
     if (chattingInputValue.length === 0) return;
     if (e.nativeEvent.isComposing) return;
 
-    const response = await httpPost('api/socket', createSocketPayload('chat/local', chattingInputValue));
-
-    if (!response.ok) {
-      console.error(response.statusText);
-      return;
-    }
-
-    const { socket } = await response.json();
-    dispatch(receiveMessage(socket));
+    await socketCaller(() => httpPost('api/socket', createSocketPayload('chat/local', chattingInputValue)), dispatch);
 
     setChattingInputValue('');
   };

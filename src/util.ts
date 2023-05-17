@@ -1,4 +1,6 @@
+import { Dispatch } from '@reduxjs/toolkit';
 import { HOST } from '../constants';
+import { receiveMessage } from './features/mozSlice';
 import { SocketPayload, SocketPayloadType } from './type/socket';
 import { User } from './type/user';
 
@@ -47,3 +49,17 @@ export async function httpDelete(path: string) {
   const response = await fetch(`${HOST}/${path}`, { method: 'DELETE', credentials: 'include' });
   return response;
 }
+
+export const socketCaller = async (apiCall: () => Promise<Response>, dispatch: Dispatch) => {
+  const response = await apiCall();
+
+  if (!response.ok) {
+    console.error(response.statusText);
+    return;
+  }
+
+  const { socket } = await response.json();
+  dispatch(receiveMessage(socket));
+
+  return response;
+};
