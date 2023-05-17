@@ -8,4 +8,5 @@ export interface Room {
   users: User[];
   quizList: Quiz[];
   status: 'wait' | 'playing';
+  round?: number;
 }

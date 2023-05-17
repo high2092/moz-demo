@@ -50,11 +50,12 @@ export async function httpDelete(path: string) {
   return response;
 }
 
-export const socketCaller = async (apiCall: () => Promise<Response>, dispatch: Dispatch) => {
+export const apiCaller = async (apiCall: () => Promise<Response>, dispatch: Dispatch) => {
   const response = await apiCall();
 
   if (!response.ok) {
-    console.error(response.statusText);
+    const { error } = await response.json();
+    alert(error.message);
     return;
   }
 
@@ -63,3 +64,12 @@ export const socketCaller = async (apiCall: () => Promise<Response>, dispatch: D
 
   return response;
 };
+
+export function dangerConcat<T>(origin: T[], data: T | T[]) {
+  if (Array.isArray(data)) {
+    data.forEach((elem) => origin.push(elem));
+  } else {
+    origin.push(data);
+  }
+  return;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import * as S from './QuizSection.style';
-import { convertPayloadToChat, httpPost } from '../util';
+import { convertPayloadToChat, httpPost, apiCaller } from '../util';
 import { setIsReady } from '../features/mozSlice';
 import { openModal } from '../features/modalSlice';
 import { ModalTypes } from '../type/modal';
@@ -26,12 +26,7 @@ export const QuizRoomMainSection = () => {
   };
 
   const handleStartButtonClick = async () => {
-    const response = await httpPost('api/game/start');
-
-    if (!response.ok) {
-      alert('준비가 완료되지 않은 유저가 있어요.');
-      return;
-    }
+    apiCaller(() => httpPost('api/game/start'), dispatch);
   };
 
   return (
