@@ -1,4 +1,6 @@
 import { rest } from 'msw';
+import { roomRepository } from './repository/RoomRepository';
+import { roomService } from './service/RoomService';
 
 export const handlers = [
   rest.get('/api/quiz', (req, res, ctx) => {
@@ -22,15 +24,20 @@ export const handlers = [
   }),
 
   rest.get('/api/room', (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json({ rooms: [] }));
+    const rooms = roomRepository.findAll();
+    return res(ctx.status(200), ctx.json({ rooms }));
   }),
 
-  rest.post('/api/room', (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(generateMockId()));
+  rest.post('/api/room', async (req, res, ctx) => {
+    const { name, capacity } = await req.json();
+    const id = roomService.createRoom(name, capacity);
+    return res(ctx.status(200), ctx.json(id));
   }),
 
   rest.get('/api/room/:id', (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json([]));
+    const id = Number(req.params.id);
+    const { users } = roomService.findRoom(id);
+    return res(ctx.status(200), ctx.json(users));
   }),
 
   rest.post('/api/game/ready', (req, res, ctx) => {
