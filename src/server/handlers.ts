@@ -1,17 +1,24 @@
 import { rest } from 'msw';
 import { roomRepository } from './repository/RoomRepository';
 import { roomService } from './service/RoomService';
+import { quizRepository } from './repository/QuizRepository';
+import { quizService } from './service/QuizService';
 
 export const handlers = [
   rest.get('/api/quiz', (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json({ quizList: [] }));
+    const quizList = quizRepository.findAll();
+    return res(ctx.status(200), ctx.json({ quizList }));
   }),
 
-  rest.post('/api/quiz', (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json({ id: generateMockId() }));
+  rest.post('/api/quiz', async (req, res, ctx) => {
+    const { type, question, answers } = await req.json();
+    const id = quizService.createQuiz(type, question, answers);
+    return res(ctx.status(200), ctx.json({ id }));
   }),
 
   rest.delete('/api/quiz/:id', (req, res, ctx) => {
+    const id = Number(req.params.id);
+    quizService.deleteQuiz(id);
     return res(ctx.status(200));
   }),
 

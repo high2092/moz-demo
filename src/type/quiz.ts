@@ -13,7 +13,7 @@ export interface Quiz {
   selected?: boolean;
 }
 
-interface Answer {
+export interface Answer {
   answer: string;
   score: number;
 }
