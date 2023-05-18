@@ -12,7 +12,7 @@ import { createRoundInfoSocketPayloads } from '../utils/socket';
 
 class RoomService {
   createRoom(name: string, capacity: number) {
-    const room: Room = { name, capacity, users: [], quizList: [], status: 'wait' };
+    const room: Room = { name, capacity, users: [], quizList: [], status: 'wait', skipVoting: [] };
     roomRepository.save(room);
     return room.id;
   }

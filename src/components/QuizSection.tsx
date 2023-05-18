@@ -29,12 +29,17 @@ export const QuizRoomMainSection = () => {
     apiCaller(() => httpPost('api/game/start'), dispatch);
   };
 
+  const handleSkipButtonClick = async () => {
+    apiCaller(() => httpPost('api/game/skip'), dispatch);
+  };
+
   return (
     <S.QuizRoomMainSection>
       <S.QuizRoomMainSectionTop>
         <button onClick={handleStartButtonClick}>게임 시작</button>
         <ReadyButton />
         <button onClick={handleAddQuizButtonClick}>문제 추가</button>
+        <button onClick={handleSkipButtonClick}>스킵 투표</button>
       </S.QuizRoomMainSectionTop>
       <QuizSection quiz={currentRoundQuiz} />
       <S.ChattingSection>

@@ -112,6 +112,20 @@ export const handlers = [
     }
   }),
 
+  rest.post('/api/game/skip', async (req, res, ctx) => {
+    const memberId = getPrincipal();
+    const member = memberRepository.findById(memberId);
+    try {
+      const payloads = gameService.voteSkip(member);
+      return res(ctx.status(200), ctx.json({ socket: payloads }));
+    } catch (e) {
+      if (e instanceof ApiError) {
+        const { message, code } = e;
+        return res(ctx.status(e.httpStatus), ctx.json({ error: { message, code } }));
+      }
+    }
+  }),
+
   rest.post('/api/socket', async (req, res, ctx) => {
     const memberId = getPrincipal();
     const member = memberRepository.findById(memberId);

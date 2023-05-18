@@ -1,6 +1,8 @@
 import { Quiz } from './quiz';
 import { User } from './user';
 
+type UserId = number;
+
 export interface Room {
   id?: number;
   name: string;
@@ -9,4 +11,5 @@ export interface Room {
   quizList: Quiz[];
   status: 'wait' | 'playing';
   round?: number;
+  skipVoting: UserId[];
 }
