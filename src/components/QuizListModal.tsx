@@ -7,7 +7,8 @@ import { apiCaller, httpDelete, httpGet } from '../util';
 import { editQuiz, removeQuiz, selectAll, setHoveredQuiz, setIsQuizBundleModal, toggleSelectQuiz } from '../features/mozSlice';
 import { QuizBundleListModalContent } from './QuizBundleListModal';
 import { Quiz, QuizType, QuizTypes } from '../type/quiz';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import YouTube from 'react-youtube';
 
 export const QuizListModal = ({ zIndex }: PreparedModalProps) => {
   const dispatch = useAppDispatch();
@@ -29,10 +30,6 @@ export const QuizListModal = ({ zIndex }: PreparedModalProps) => {
 export const QuizListModalContent = () => {
   const dispatch = useAppDispatch();
   const { quizzes, selectedQuizBundle, hoveredQuizId, isQuizBundleModal } = useAppSelector((state) => state.moz);
-
-  const [thumbnailBase64, setThumbnailBase64] = useState('');
-
-  const timeoutRef = useRef<NodeJS.Timeout>(null);
 
   const quizList = selectedQuizBundle?.quizList ?? Object.values(quizzes);
   const hoveredQuiz = quizzes[hoveredQuizId];
@@ -73,15 +70,12 @@ export const QuizListModalContent = () => {
     e.stopPropagation();
     dispatch(setHoveredQuiz(quiz.id));
 
-    setThumbnailBase64(null);
-    if (quiz.type !== QuizTypes.MUSIC) return;
+    // if (quiz.type !== QuizTypes.MUSIC) return;
 
-    clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(async () => {
-      const { valid, base64Image } = await apiCaller(() => httpGet(`api/validate-video-id?videoId=${quiz.question}`));
-      if (valid) setThumbnailBase64(base64Image);
-      else setThumbnailBase64(undefined);
-    }, 1000);
+    // clearTimeout(timeoutRef.current);
+    // timeoutRef.current = setTimeout(async () => {
+    //   const { valid, base64Image } = await apiCaller(() => httpGet(`api/validate-video-id?videoId=${quiz.question}`));
+    // }, 1000);
   };
 
   return (
@@ -117,23 +111,22 @@ export const QuizListModalContent = () => {
         )}
       </div>
 
-      <S.QuizInfoModalContainer>{hoveredQuiz && <QuizInfoModal quiz={hoveredQuiz} thumbnailBase64={thumbnailBase64} />}</S.QuizInfoModalContainer>
+      <S.QuizInfoModalContainer>{hoveredQuiz && <QuizInfoModal quiz={hoveredQuiz} />}</S.QuizInfoModalContainer>
     </S.QuizListModalContainer>
   );
 };
 
 interface QuizInfoModalProps {
   quiz: Quiz;
-  thumbnailBase64: string;
 }
 
-function QuizInfoModal({ quiz, thumbnailBase64 }: QuizInfoModalProps) {
+function QuizInfoModal({ quiz }: QuizInfoModalProps) {
   const { type, answers } = quiz;
   return (
     <S.QuizInfoModal onClick={(e) => e.stopPropagation()}>
       <div>타입: {type === QuizTypes.CONSONANT ? '초성' : '뮤직'}</div>
       <S.QuizInfoModalQuestionSection>
-        <QuizInfoModalQuestionInfo {...quiz} thumbnail={thumbnailBase64} />
+        <QuizInfoModalQuestionInfo />
       </S.QuizInfoModalQuestionSection>
       <div style={{ height: '6rem' }}>
         {answers.map(({ answer, score }) => (
@@ -147,18 +140,25 @@ function QuizInfoModal({ quiz, thumbnailBase64 }: QuizInfoModalProps) {
   );
 }
 
-interface QuizInfoModalQuestionInfoProps {
-  type: QuizType;
-  question: string;
-  thumbnail: string;
-}
+function QuizInfoModalQuestionInfo() {
+  const { quizzes, hoveredQuizId } = useAppSelector((state) => state.moz);
+  const { type, question } = quizzes[hoveredQuizId];
 
-function QuizInfoModalQuestionInfo({ type, question, thumbnail }: QuizInfoModalQuestionInfoProps) {
+  const [videoId, setVideoId] = useState<string>(null);
+
+  // 과도한 요청 방지
+  useEffect(() => {
+    setVideoId(null);
+    const handle = setTimeout(() => {
+      setVideoId(question);
+    }, 1000);
+
+    return () => clearTimeout(handle);
+  }, [question]);
+
   switch (type) {
     case QuizTypes.MUSIC: {
-      if (thumbnail === null) return <div>Loading...</div>;
-      if (thumbnail === undefined) return <div>Invalid Video ID</div>;
-      return <S.MusicQuizInfoThumbnail src={`data:image:jpeg;base64,${thumbnail}`} />;
+      return videoId === null ? <div>Loading...</div> : <YouTube videoId={videoId} opts={{ width: 210, height: 105 }} />;
     }
     case QuizTypes.CONSONANT: {
       return <div>{question}</div>;
