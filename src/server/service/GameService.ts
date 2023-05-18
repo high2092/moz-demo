@@ -18,10 +18,11 @@ class GameService {
     const payloads: SocketPayload[] = [];
 
     if (score !== 0) {
-      dangerConcat(payloads, createSocketPayload(SocketPayloadTypes.SYSTEM, `${member.name}님 ${score}점 획득!`));
-
       if (score >= ROUND_SKIP_THRESHOLD) {
+        dangerConcat(payloads, createSocketPayload(SocketPayloadTypes.SYSTEM, `${member.name}님 ${score}점 획득! (정답: ${answer})`));
         dangerConcat(payloads, this.skipRound(room));
+      } else {
+        dangerConcat(payloads, createSocketPayload(SocketPayloadTypes.SYSTEM, `${member.name}님 ${score}점 획득!`));
       }
     }
 
@@ -52,7 +53,7 @@ class GameService {
 
     if (room.skipVoting.length === room.users.length) {
       room.skipVoting = [];
-      payloads.push(createSocketPayload(SocketPayloadTypes.SYSTEM, '만장일치로 현재 라운드를 스킵합니다.'));
+      payloads.push(createSocketPayload(SocketPayloadTypes.SYSTEM, `만장일치로 현재 라운드를 스킵합니다. (정답: ${getCurrentRoundQuiz(room).answers[0].answer})`));
       dangerConcat(payloads, this.skipRound(room));
     }
 
