@@ -15,6 +15,7 @@ interface ModalProps {
   dimmedOpacity?: number;
 
   onMouseOver?: () => void;
+  onClick?: () => void;
 }
 
 export const Modal = ({ content, zIndex, handleDimmedClick, top, right, bottom, left, transform, dimmedOpacity, ...props }: ModalProps) => {

@@ -25,7 +25,7 @@ export const DeleteButton = styled.div`
 export const QuizInfoModalContainer = styled.div`
   width: ${QUIZ_INFO_MODAL_CONTAINER_WIDTH_REM}rem;
 
-  padding-left: 1rem;
+  margin-left: 1rem;
 `;
 
 export const QuizInfoModal = styled.div`
