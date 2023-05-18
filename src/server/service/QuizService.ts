@@ -3,6 +3,7 @@ import { quizRepository } from '../repository/QuizRepository';
 
 class QuizService {
   createQuiz(type: QuizType, question: string, answers: Answer[]) {
+    answers.forEach((answer) => (answer.score = Number(answer.score)));
     const quiz: Quiz = { type, question, answers };
     quizRepository.save(quiz);
     return quiz.id;
