@@ -17,7 +17,8 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.9",
     "react-redux": "^8.0.5",
-    "react-youtube": "^10.1.0"
+    "react-youtube": "^10.1.0",
+    "terser-webpack-plugin": "^5.3.9"
   },
   "devDependencies": {
     "@types/node": "20.0.0",
