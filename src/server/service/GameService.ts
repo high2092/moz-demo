@@ -4,6 +4,7 @@ import { User } from '../../type/user';
 import { createSocketPayload, dangerConcat } from '../../util';
 import { getCurrentRoundQuiz } from '../utils/room';
 import { createRoundInfoSocketPayloads } from '../utils/socket';
+import { trim } from '../utils/string';
 
 const ROUND_SKIP_THRESHOLD = 5;
 class GameService {
@@ -43,7 +44,7 @@ class GameService {
 function calculateScore(room: Room, userAnswer: string) {
   const { answers } = getCurrentRoundQuiz(room);
   for (const { score, answer } of answers) {
-    if (userAnswer === answer) return score;
+    if (trim(userAnswer) === trim(answer)) return score;
   }
   return 0;
 }
