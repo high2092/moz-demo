@@ -15,6 +15,8 @@ interface MozState {
   editingQuiz: Quiz;
 
   isQuizBundleModal: boolean;
+
+  hoveredQuiz: Quiz;
 }
 
 const initialState: MozState = {
@@ -29,6 +31,8 @@ const initialState: MozState = {
   editingQuiz: null,
 
   isQuizBundleModal: true,
+
+  hoveredQuiz: null,
 };
 
 export const mozSlice = createSlice({
@@ -122,7 +126,11 @@ export const mozSlice = createSlice({
     setIsQuizBundleModal(state, action: PayloadAction<boolean>) {
       state.isQuizBundleModal = action.payload;
     },
+
+    setHoveredQuiz(state, action: PayloadAction<Quiz>) {
+      state.hoveredQuiz = action.payload;
+    },
   },
 });
 
-export const { initSocket, receiveMessage, setIsReady, fetchQuiz, addQuiz, removeQuiz, addQuizBundle, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle, editQuiz, setIsQuizBundleModal } = mozSlice.actions;
+export const { initSocket, receiveMessage, setIsReady, fetchQuiz, addQuiz, removeQuiz, addQuizBundle, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle, editQuiz, setIsQuizBundleModal, setHoveredQuiz } = mozSlice.actions;
