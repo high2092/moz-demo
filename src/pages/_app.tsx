@@ -1,4 +1,5 @@
 import '../../public/css/reset.css';
+import '../../public/css/index.css';
 import { Provider } from 'react-redux';
 import { store } from '../store';
 import { ModalContainer } from '../components/ModalContainer';
