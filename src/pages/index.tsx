@@ -4,7 +4,7 @@ import { openModal } from '../features/modalSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ModalTypes } from '../type/modal';
 import { apiCaller, convertPayloadToChat, downloadFile, httpGet, httpPost } from '../util';
-import { fetchProfile, fetchQuiz, fetchQuizBundleList, fetchRoomList, initSocket, receiveMessage } from '../features/mozSlice';
+import { fetchProfile, fetchQuiz, fetchQuizBundleList, fetchRoomList, initSocket, receiveMessage, setInitialized } from '../features/mozSlice';
 import { useRouter } from 'next/router';
 import { ChattingInput } from '../components/ChattingInput';
 
@@ -39,7 +39,7 @@ async function httpGetQuizBundleList() {
 
 const Home = () => {
   const dispatch = useAppDispatch();
-  const { chatList, myProfile, roomList } = useAppSelector((state) => state.moz);
+  const { chatList, myProfile, roomList, initialized } = useAppSelector((state) => state.moz);
   const router = useRouter();
 
   const loadInputRef = useRef<HTMLInputElement>(null);
@@ -47,6 +47,16 @@ const Home = () => {
   useEffect(() => {
     fetchData();
     apiCaller(() => httpGet('api/user/me')).then(({ profile }) => dispatch(fetchProfile(profile)));
+  }, []);
+
+  useEffect(() => {
+    if (initialized) return;
+    fetch('backup/default.moz')
+      .then((response) => response.text())
+      .then(_import)
+      .catch((error) => console.error(error));
+
+    dispatch(setInitialized(true));
   }, []);
 
   const handleRoomCreateButtonClick = async () => {
@@ -77,14 +87,16 @@ const Home = () => {
     const file = target.files[0];
 
     const reader = new FileReader();
-    reader.onload = async () => {
-      const { result } = await apiCaller(() => httpPost('api/import', { cipher: reader.result }));
-      const data = await apiCaller(() => httpPost('api/load', result));
-      if (data !== undefined) {
-        fetchData();
-      }
-    };
+    reader.onload = () => _import(reader.result as string);
     reader.readAsText(file);
+  };
+
+  const _import = async (cipher: string) => {
+    const { result } = await apiCaller(() => httpPost('api/import', { cipher }));
+    const data = await apiCaller(() => httpPost('api/load', result));
+    if (data !== undefined) {
+      fetchData();
+    }
   };
 
   const fetchData = () => {

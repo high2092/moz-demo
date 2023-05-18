@@ -24,6 +24,8 @@ interface MozState {
   roomInfo: RoomDto;
 
   roomList: RoomProfile[];
+
+  initialized: boolean;
 }
 
 const initialState: MozState = {
@@ -45,6 +47,8 @@ const initialState: MozState = {
   roomInfo: null,
 
   roomList: [],
+
+  initialized: false,
 };
 
 export const mozSlice = createSlice({
@@ -159,6 +163,10 @@ export const mozSlice = createSlice({
     addRoom(state, action: PayloadAction<RoomProfile>) {
       state.roomList.push(action.payload);
     },
+
+    setInitialized(state, action: PayloadAction<boolean>) {
+      state.initialized = action.payload;
+    },
   },
 });
 
@@ -180,4 +188,5 @@ export const {
   fetchProfile,
   fetchRoomList,
   addRoom,
+  setInitialized,
 } = mozSlice.actions;
