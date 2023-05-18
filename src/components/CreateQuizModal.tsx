@@ -53,7 +53,7 @@ function CreateQuizModalContent() {
       dispatch(addQuiz({ ...quiz, id }));
       alert('저장되었습니다.');
     } else {
-      const id = await apiCaller(() => httpPost('api/quiz', quiz));
+      const { id } = await apiCaller(() => httpPost('api/quiz', quiz));
       dispatch(addQuiz({ ...quiz, id }));
     }
   };
