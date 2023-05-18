@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SocketPayload, SocketPayloadTypes } from '../type/socket';
 import { Quiz, QuizTypes } from '../type/quiz';
 import { QuizBundle } from '../type/quizBundle';
+import { User } from '../type/user';
 
 interface MozState {
   socket: WebSocket;
@@ -17,6 +18,8 @@ interface MozState {
   isQuizBundleModal: boolean;
 
   hoveredQuizId: number;
+
+  myProfile: User;
 }
 
 const initialState: MozState = {
@@ -33,6 +36,8 @@ const initialState: MozState = {
   isQuizBundleModal: true,
 
   hoveredQuizId: null,
+
+  myProfile: null,
 };
 
 export const mozSlice = createSlice({
@@ -130,7 +135,13 @@ export const mozSlice = createSlice({
     setHoveredQuiz(state, action: PayloadAction<number>) {
       state.hoveredQuizId = action.payload;
     },
+
+    fetchProfile(state, action: PayloadAction<User>) {
+      console.log(action.payload);
+      state.myProfile = action.payload;
+    },
   },
 });
 
-export const { initSocket, receiveMessage, setIsReady, fetchQuiz, addQuiz, removeQuiz, addQuizBundle, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle, editQuiz, setIsQuizBundleModal, setHoveredQuiz } = mozSlice.actions;
+export const { initSocket, receiveMessage, setIsReady, fetchQuiz, addQuiz, removeQuiz, addQuizBundle, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle, editQuiz, setIsQuizBundleModal, setHoveredQuiz, fetchProfile } =
+  mozSlice.actions;

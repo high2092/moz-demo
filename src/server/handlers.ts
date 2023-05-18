@@ -13,6 +13,13 @@ import { ApiError } from '../error/api/ApiError';
 import { gameService } from './service/GameService';
 import { dangerConcat } from '../util';
 
+const USER_ID = 1;
+
+function init() {
+  const member: User = { name: 'guest', score: 0 };
+  memberRepository.save(member);
+}
+
 export const handlers = [
   rest.get('/api/quiz', (req, res, ctx) => {
     const quizList = quizRepository.findAll();
@@ -159,15 +166,15 @@ export const handlers = [
 
     return res(ctx.status(200));
   }),
+
+  rest.get('/api/user/me', async (req, res, ctx) => {
+    const profile = memberRepository.findById(USER_ID);
+    return res(ctx.status(200), ctx.json({ profile }));
+  }),
 ];
 
 function getPrincipal() {
-  return 1;
-}
-
-function init() {
-  const member: User = { name: 'guest' };
-  memberRepository.save(member);
+  return USER_ID;
 }
 
 init();

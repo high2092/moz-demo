@@ -4,7 +4,7 @@ import { openModal } from '../features/modalSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ModalTypes } from '../type/modal';
 import { apiCaller, convertPayloadToChat, downloadFile, httpGet, httpPost } from '../util';
-import { fetchQuiz, fetchQuizBundleList, initSocket, receiveMessage } from '../features/mozSlice';
+import { fetchProfile, fetchQuiz, fetchQuizBundleList, initSocket, receiveMessage } from '../features/mozSlice';
 import { useRouter } from 'next/router';
 import { ChattingInput } from '../components/ChattingInput';
 
@@ -39,7 +39,7 @@ async function httpGetQuizBundleList() {
 
 const Home = () => {
   const dispatch = useAppDispatch();
-  const { socket, chatList } = useAppSelector((state) => state.moz);
+  const { chatList, myProfile } = useAppSelector((state) => state.moz);
   const router = useRouter();
 
   const [roomList, setRoomList] = useState([]);
@@ -48,14 +48,9 @@ const Home = () => {
 
   useEffect(() => {
     httpGetRoomList().then(setRoomList);
-  }, []);
-
-  useEffect(() => {
     httpGetQuizList().then((quizList) => dispatch(fetchQuiz(quizList)));
-  }, []);
-
-  useEffect(() => {
     httpGetQuizBundleList().then((quizBundleList) => dispatch(fetchQuizBundleList(quizBundleList)));
+    apiCaller(() => httpGet('api/user/me')).then(({ profile }) => dispatch(fetchProfile(profile)));
   }, []);
 
   const handleRoomCreateButtonClick = async () => {
@@ -115,6 +110,7 @@ const Home = () => {
     <S.Home>
       <div style={{ display: 'flex' }}>
         <h1>MOZ</h1>
+        <div style={{ position: 'absolute', right: 0, top: 0 }}>{myProfile?.name}</div>
         <button onClick={handleRoomCreateButtonClick}>방 만들기</button>
         <button onClick={() => dispatch(openModal(ModalTypes.QUIZ_LIST))}>퀴즈 관리</button>
         <button onClick={handleExtractButtonClick}>코드 생성</button>
