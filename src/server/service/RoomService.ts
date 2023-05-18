@@ -9,10 +9,12 @@ import { AlreadyPlayingError } from '../../error/api/AlreadyPlayingError';
 import { EmptyQuizListError } from '../../error/api/EmptyQuizListError';
 import { getCurrentRoundQuiz } from '../utils/room';
 import { createRoundInfoSocketPayloads } from '../utils/socket';
+import { Quiz } from '../../type/quiz';
+import { shuffle } from '../utils/array';
 
 class RoomService {
-  createRoom(name: string, capacity: number) {
-    const room: Room = { name, capacity, users: [], quizList: [], status: 'wait', skipVoting: [] };
+  createRoom(name: string, capacity: number, quizList?: Quiz[]) {
+    const room: Room = { name, capacity, users: [], quizList: quizList ?? [], status: 'wait', skipVoting: [] };
     roomRepository.save(room);
     return room.id;
   }
@@ -24,7 +26,7 @@ class RoomService {
   addQuizzes(id: number, quizIdList: number[]) {
     const room = roomRepository.findById(id);
     const quizList = quizIdList.map((id) => quizRepository.findById(id));
-    room.quizList = room.quizList.concat(quizList).sort((a, b) => Math.random() - 0.5);
+    room.quizList = room.quizList.concat(quizList);
   }
 
   private checkAllReady(id: number) {
@@ -53,6 +55,7 @@ class RoomService {
 
     room.round = 1;
     room.status = 'playing';
+    room.quizList = shuffle(room.quizList);
 
     const payloads: SocketPayload[] = [];
     dangerConcat(payloads, createSocketPayload(SocketPayloadTypes.SYSTEM, '게임 시작!'));

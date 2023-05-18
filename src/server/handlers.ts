@@ -57,8 +57,8 @@ export const handlers = [
   }),
 
   rest.get('/api/room', (req, res, ctx) => {
-    const rooms = roomRepository.findAll();
-    return res(ctx.status(200), ctx.json({ rooms }));
+    const roomList = roomRepository.findAll();
+    return res(ctx.status(200), ctx.json({ roomList }));
   }),
 
   rest.post('/api/room', async (req, res, ctx) => {
@@ -159,10 +159,11 @@ export const handlers = [
   }),
 
   rest.post('/api/load', async (req, res, ctx) => {
-    const { quizList, quizBundleList } = await req.json();
+    const { quizList, quizBundleList, roomList } = await req.json();
 
-    quizList.forEach(({ type, question, answers }) => quizService.createQuiz(type, question, answers));
-    quizBundleList.forEach(({ title, quizzes }) => quizBundleService.createQuizBundle(title, quizzes));
+    quizList?.forEach(({ type, question, answers }) => quizService.createQuiz(type, question, answers));
+    roomList?.forEach(({ name, capacity, quizList }) => roomService.createRoom(name, capacity, quizList));
+    quizBundleList?.forEach(({ title, quizzes }) => quizBundleService.createQuizBundle(title, quizzes));
 
     return res(ctx.status(200));
   }),

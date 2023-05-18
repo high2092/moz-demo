@@ -10,9 +10,9 @@ import { ChattingInput } from '../components/ChattingInput';
 
 const httpGetRoomList = async () => {
   const response = await httpGet('api/room');
-  const { rooms } = await response.json();
+  const { roomList } = await response.json();
 
-  return rooms;
+  return roomList;
 };
 
 const httpGetQuizList = async () => {
@@ -47,9 +47,7 @@ const Home = () => {
   const loadInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    httpGetRoomList().then(setRoomList);
-    httpGetQuizList().then((quizList) => dispatch(fetchQuiz(quizList)));
-    httpGetQuizBundleList().then((quizBundleList) => dispatch(fetchQuizBundleList(quizBundleList)));
+    fetchData();
     apiCaller(() => httpGet('api/user/me')).then(({ profile }) => dispatch(fetchProfile(profile)));
   }, []);
 
@@ -78,11 +76,12 @@ const Home = () => {
 
   const handleExtractButtonClick = async () => {
     const { quizList } = await apiCaller(() => httpGet('api/quiz'));
-
+    const { roomList } = await apiCaller(() => httpGet('api/room'));
     const { quizBundleList } = await apiCaller(() => httpGet('api/quiz-bundle'));
 
     const payload = {
       quizList: quizList.map(({ type, question, answers }) => ({ type, question, answers })),
+      roomList: roomList.map(({ name, capacity, quizList }) => ({ name, capacity, quizList })),
       quizBundleList: quizBundleList.map(({ title, quizList }) => ({ title, quizList })),
     };
 
@@ -99,11 +98,16 @@ const Home = () => {
       const { result } = await apiCaller(() => httpPost('api/import', { cipher: reader.result }));
       const data = await apiCaller(() => httpPost('api/load', result));
       if (data !== undefined) {
-        httpGetQuizList().then((quizList) => dispatch(fetchQuiz(quizList)));
-        httpGetQuizBundleList().then((quizBundleList) => dispatch(fetchQuizBundleList(quizBundleList)));
+        fetchData();
       }
     };
     reader.readAsText(file);
+  };
+
+  const fetchData = () => {
+    httpGetRoomList().then(setRoomList);
+    httpGetQuizList().then((quizList) => dispatch(fetchQuiz(quizList)));
+    httpGetQuizBundleList().then((quizBundleList) => dispatch(fetchQuizBundleList(quizBundleList)));
   };
 
   return (
