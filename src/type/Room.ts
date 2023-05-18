@@ -13,3 +13,10 @@ export interface Room {
   round?: number;
   skipVoting: UserId[];
 }
+
+export interface RoomDto {
+  users: User[];
+  currentRound: number;
+  totalRound: number;
+  skipVotingCount: number;
+}

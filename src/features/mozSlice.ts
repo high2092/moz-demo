@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SocketPayload, SocketPayloadTypes } from '../type/socket';
 import { Quiz, QuizTypes } from '../type/quiz';
 import { QuizBundle } from '../type/quizBundle';
+import { RoomDto } from '../type/Room';
 import { User } from '../type/user';
 
 interface MozState {
@@ -20,6 +21,7 @@ interface MozState {
   hoveredQuizId: number;
 
   myProfile: User;
+  roomInfo: RoomDto;
 }
 
 const initialState: MozState = {
@@ -38,6 +40,7 @@ const initialState: MozState = {
   hoveredQuizId: null,
 
   myProfile: null,
+  roomInfo: null,
 };
 
 export const mozSlice = createSlice({
@@ -70,6 +73,10 @@ export const mozSlice = createSlice({
             state.isReady = false;
             state.chatList = [...state.chatList, payload];
             state.currentRoundQuiz = null;
+            break;
+          }
+          case SocketPayloadTypes.ROOM_INFO: {
+            state.roomInfo = JSON.parse(payload.body);
             break;
           }
         }

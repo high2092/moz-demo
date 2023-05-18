@@ -11,8 +11,10 @@ import { ChattingInput } from './ChattingInput';
 
 export const QuizRoomMainSection = () => {
   const dispatch = useAppDispatch();
-  const { chatList, currentRoundQuiz } = useAppSelector((state) => state.moz);
+  const { chatList, currentRoundQuiz, myProfile, roomInfo } = useAppSelector((state) => state.moz);
   const chattingBoxRef = useRef(null);
+
+  const me = roomInfo ? roomInfo.users.find((user) => user.id === myProfile.id) : undefined;
 
   useEffect(() => {
     const chattingBox = chattingBoxRef.current;
@@ -42,6 +44,12 @@ export const QuizRoomMainSection = () => {
         <button onClick={handleSkipButtonClick}>스킵 투표</button>
       </S.QuizRoomMainSectionTop>
       <QuizSection quiz={currentRoundQuiz} />
+      {roomInfo && (
+        <div>
+          <div>현재 라운드: {`${roomInfo.currentRound} / ${roomInfo.totalRound}`}</div>
+          <div>내 점수: {me?.score}</div>
+        </div>
+      )}
       <S.ChattingSection>
         <S.ChattingBox ref={chattingBoxRef}>
           {chatList.map((chat, idx) => (

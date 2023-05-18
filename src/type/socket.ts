@@ -4,6 +4,7 @@ export const SocketPayloadTypes = {
   ROUND_INFO: 'roundInfo',
   MUSIC_QUIZ: 'quiz/music',
   GAME_OVER: 'gameOver',
+  ROOM_INFO: 'roomInfo',
 } as const;
 
 export type SocketPayloadType = (typeof SocketPayloadTypes)[keyof typeof SocketPayloadTypes];
