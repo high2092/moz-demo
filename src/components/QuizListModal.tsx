@@ -6,8 +6,8 @@ import { CenteredModal } from './Modal';
 import { apiCaller, httpDelete, httpGet } from '../util';
 import { editQuiz, removeQuiz, selectAll, setHoveredQuiz, setIsQuizBundleModal, toggleSelectQuiz } from '../features/mozSlice';
 import { QuizBundleListModalContent } from './QuizBundleListModal';
-import { Quiz, QuizTypes } from '../type/quiz';
-import { useEffect, useRef, useState } from 'react';
+import { Quiz, QuizType, QuizTypes } from '../type/quiz';
+import { useRef, useState } from 'react';
 
 export const QuizListModal = ({ zIndex }: PreparedModalProps) => {
   const dispatch = useAppDispatch();
@@ -70,6 +70,7 @@ export const QuizListModalContent = () => {
     timeoutRef.current = setTimeout(async () => {
       const { valid, base64Image } = await apiCaller(() => httpGet(`api/validate-video-id?videoId=${quiz.question}`));
       if (valid) setThumbnailBase64(base64Image);
+      else setThumbnailBase64(undefined);
     }, 1000);
   };
 
@@ -115,12 +116,12 @@ interface QuizInfoModalProps {
 }
 
 function QuizInfoModal({ quiz, thumbnailBase64 }: QuizInfoModalProps) {
-  const { type, question, answers } = quiz;
+  const { type, answers } = quiz;
   return (
     <S.QuizInfoModal>
       <div>타입: {type === QuizTypes.CONSONANT ? '초성' : '뮤직'}</div>
       <S.QuizInfoModalQuestionSection>
-        {type === QuizTypes.MUSIC ? <div>{thumbnailBase64 === null ? <div>Loading...</div> : <S.MusicQuizInfoThumbnail src={`data:image:jpeg;base64,${thumbnailBase64}`} />}</div> : <div>{question}</div>}
+        <QuizInfoModalQuestionInfo {...quiz} thumbnail={thumbnailBase64} />
       </S.QuizInfoModalQuestionSection>
       <div style={{ height: '6rem' }}>
         {answers.map(({ answer, score }) => (
@@ -132,4 +133,26 @@ function QuizInfoModal({ quiz, thumbnailBase64 }: QuizInfoModalProps) {
       </div>
     </S.QuizInfoModal>
   );
+}
+
+interface QuizInfoModalQuestionInfoProps {
+  type: QuizType;
+  question: string;
+  thumbnail: string;
+}
+
+function QuizInfoModalQuestionInfo({ type, question, thumbnail }: QuizInfoModalQuestionInfoProps) {
+  switch (type) {
+    case QuizTypes.MUSIC: {
+      if (thumbnail === null) return <div>Loading...</div>;
+      if (thumbnail === undefined) return <div>Invalid Video ID</div>;
+      return <S.MusicQuizInfoThumbnail src={`data:image:jpeg;base64,${thumbnail}`} />;
+    }
+    case QuizTypes.CONSONANT: {
+      return <div>{question}</div>;
+    }
+    default: {
+      return <></>;
+    }
+  }
 }
