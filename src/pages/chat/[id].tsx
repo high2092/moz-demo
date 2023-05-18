@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { RoomUserSection } from '../../components/RoomUserSection';
 import { QuizRoomMainSection } from '../../components/QuizSection';
 import { cutUserListInHalf, httpGet } from '../../util';
+import { useAppSelector } from '../../store';
+import { useRouter } from 'next/router';
 
 const httpGetRoom = async (id: number) => {
   const response = await httpGet(`api/room/${id}`);
@@ -16,13 +18,21 @@ const httpGetRoom = async (id: number) => {
 };
 
 const ChatRoom = ({ id }) => {
+  const router = useRouter();
+  const { initialized } = useAppSelector((state) => state.moz);
   const [userList, setUserList] = useState([]);
 
-  const [leftUserList, rightUserList] = cutUserListInHalf(userList);
-
   useEffect(() => {
+    if (!initialized) {
+      router.push('/');
+      return;
+    }
     httpGetRoom(id).then(setUserList);
   }, []);
+
+  if (!initialized) return <></>;
+
+  const [leftUserList, rightUserList] = cutUserListInHalf(userList);
 
   return (
     <S.QuizRoomPage>
