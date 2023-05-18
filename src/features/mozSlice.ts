@@ -16,7 +16,7 @@ interface MozState {
 
   isQuizBundleModal: boolean;
 
-  hoveredQuiz: Quiz;
+  hoveredQuizId: number;
 }
 
 const initialState: MozState = {
@@ -32,7 +32,7 @@ const initialState: MozState = {
 
   isQuizBundleModal: true,
 
-  hoveredQuiz: null,
+  hoveredQuizId: null,
 };
 
 export const mozSlice = createSlice({
@@ -127,8 +127,8 @@ export const mozSlice = createSlice({
       state.isQuizBundleModal = action.payload;
     },
 
-    setHoveredQuiz(state, action: PayloadAction<Quiz>) {
-      state.hoveredQuiz = action.payload;
+    setHoveredQuiz(state, action: PayloadAction<number>) {
+      state.hoveredQuizId = action.payload;
     },
   },
 });

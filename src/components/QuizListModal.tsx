@@ -15,13 +15,14 @@ export const QuizListModal = ({ zIndex }: PreparedModalProps) => {
 
 export const QuizListModalContent = () => {
   const dispatch = useAppDispatch();
-  const { quizzes, selectedQuizBundle, hoveredQuiz, isQuizBundleModal } = useAppSelector((state) => state.moz);
+  const { quizzes, selectedQuizBundle, hoveredQuizId, isQuizBundleModal } = useAppSelector((state) => state.moz);
 
   const [thumbnailBase64, setThumbnailBase64] = useState('');
 
   const timeoutRef = useRef<NodeJS.Timeout>(null);
 
   const quizList = selectedQuizBundle?.quizList ?? Object.values(quizzes);
+  const hoveredQuiz = quizzes[hoveredQuizId];
 
   useEffect(() => {
     const resetHover = () => dispatch(setHoveredQuiz(null));
@@ -64,7 +65,7 @@ export const QuizListModalContent = () => {
 
   const handleQuizMouseOver = async (e: React.MouseEvent, quiz: Quiz) => {
     e.stopPropagation();
-    dispatch(setHoveredQuiz(quiz));
+    dispatch(setHoveredQuiz(quiz.id));
 
     setThumbnailBase64(null);
     if (quiz.type !== QuizTypes.MUSIC) return;
