@@ -10,6 +10,12 @@ export const CreateQuizForm = styled.form`
   flex-direction: column;
 `;
 
+export const AnswerSection = styled.div`
+  height: 7rem;
+
+  overflow: scroll;
+`;
+
 export const AnswerScoreInputRow = styled.div`
   display: flex;
 `;

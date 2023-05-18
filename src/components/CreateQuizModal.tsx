@@ -7,7 +7,7 @@ import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { useAppDispatch } from '../store';
 import { addQuiz } from '../features/mozSlice';
 import { RadioGroup } from './RadioGroup';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const CreateQuizModal = ({ zIndex }: PreparedModalProps) => {
   return <CenteredModal content={<CreateQuizModalContent />} zIndex={zIndex} />;
@@ -31,8 +31,7 @@ function CreateQuizModalContent() {
   };
 
   const handleCreateQuiz = async (formData: FieldValues) => {
-    const { consonant } = formData;
-    const answers = [formData.defaultAnswer, ...formData.answers];
+    const { consonant, answers } = formData;
     const quiz: Quiz = { type: quizType, question: getQuestion(quizType, { consonant, videoId }), answers };
     const response = await httpPost('api/quiz', quiz);
 
@@ -61,10 +60,24 @@ function CreateQuizModalContent() {
     setVideoId(videoId);
   };
 
+  useEffect(() => {
+    append({ answer: '', score: 5 });
+  }, []);
+
+  const handleAddAnswerButtonClick = () => {
+    const MAX_ANSWER_COUNT = 5;
+    if (fields.length === MAX_ANSWER_COUNT) {
+      alert('정답은 최대 5개까지만 설정할 수 있어요.');
+      return;
+    }
+    append({ answer: '', score: 5 });
+  };
+
   return (
     <S.CreateQuizModal>
       <S.CreateQuizForm onSubmit={handleSubmit(handleCreateQuiz)}>
         <RadioGroup
+          style={{ display: 'flex' }}
           name="quizType"
           options={[
             { value: QuizTypes.CONSONANT, label: '초성' },
@@ -73,31 +86,32 @@ function CreateQuizModalContent() {
           currentValue={quizType}
           setCurrentValue={(value: QuizType) => setQuizType(value)}
         />
+
         {quizType === QuizTypes.CONSONANT && <input {...register('consonant')} placeholder="초성" />}
         {quizType === QuizTypes.MUSIC && <input onChange={handleVideoIdInputChange} value={videoId} placeholder="비디오 ID" />}
 
-        <S.AnswerScoreInputRow>
-          <input {...register(`defaultAnswer.answer`)} placeholder="정답" />
-          <input {...register(`defaultAnswer.score`)} placeholder="점수" />
-          <S.AnswerRemoveButton />
-        </S.AnswerScoreInputRow>
+        <S.AnswerSection>
+          {fields.map((field, index) => (
+            <div key={`answer-${field.id}`}>
+              <S.AnswerScoreInputRow>
+                <input {...register(`answers.${index}.answer`)} placeholder={`정답${index + 1}`} />
+                <input {...register(`answers.${index}.score`)} placeholder="점수" />
 
-        {fields.map((field, index) => (
-          <div key={`answer-${field.id}`}>
-            <S.AnswerScoreInputRow>
-              <input {...register(`answers.${index}.answer`)} placeholder={`정답${index + 2}`} />
-              <input {...register(`answers.${index}.score`)} placeholder="점수" />
-              <S.AnswerRemoveButton>
-                <button type="button" onClick={() => remove(index)}>
-                  Remove
-                </button>
-              </S.AnswerRemoveButton>
-            </S.AnswerScoreInputRow>
-          </div>
-        ))}
-        <button type="button" onClick={() => append('')}>
-          정답 추가
-        </button>
+                {index === 0 ? (
+                  <button type="button" onClick={handleAddAnswerButtonClick}>
+                    정답 추가
+                  </button>
+                ) : (
+                  <S.AnswerRemoveButton>
+                    <button type="button" onClick={() => remove(index)}>
+                      Remove
+                    </button>
+                  </S.AnswerRemoveButton>
+                )}
+              </S.AnswerScoreInputRow>
+            </div>
+          ))}
+        </S.AnswerSection>
 
         <button>퀴즈 생성</button>
       </S.CreateQuizForm>
