@@ -10,7 +10,10 @@ import { Quiz, QuizTypes } from '../type/quiz';
 import { useEffect, useRef, useState } from 'react';
 
 export const QuizListModal = ({ zIndex }: PreparedModalProps) => {
-  return <CenteredModal content={<QuizListModalContent />} zIndex={zIndex} />;
+  const dispatch = useAppDispatch();
+  const resetHover = () => dispatch(setHoveredQuiz(null));
+
+  return <CenteredModal content={<QuizListModalContent />} zIndex={zIndex} onMouseOver={resetHover} />;
 };
 
 export const QuizListModalContent = () => {
@@ -23,13 +26,6 @@ export const QuizListModalContent = () => {
 
   const quizList = selectedQuizBundle?.quizList ?? Object.values(quizzes);
   const hoveredQuiz = quizzes[hoveredQuizId];
-
-  useEffect(() => {
-    const resetHover = () => dispatch(setHoveredQuiz(null));
-
-    window.addEventListener('mouseover', resetHover);
-    return () => window.removeEventListener('mouseover', resetHover);
-  }, []);
 
   const handleCreateQuizButtonClick = () => {
     dispatch(openModal(ModalTypes.CREATE_QUIZ));

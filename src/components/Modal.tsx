@@ -13,9 +13,11 @@ interface ModalProps {
   left?: string;
   transform?: string;
   dimmedOpacity?: number;
+
+  onMouseOver?: () => void;
 }
 
-export const Modal = ({ content, zIndex, handleDimmedClick, top, right, bottom, left, transform, dimmedOpacity }: ModalProps) => {
+export const Modal = ({ content, zIndex, handleDimmedClick, top, right, bottom, left, transform, dimmedOpacity, ...props }: ModalProps) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -30,17 +32,17 @@ export const Modal = ({ content, zIndex, handleDimmedClick, top, right, bottom, 
   handleDimmedClick ??= () => dispatch(closeModal());
 
   return (
-    <>
+    <div {...props}>
       <ModalContent {...styleProps}>{content}</ModalContent>
       <Dimmed zIndex={zIndex - 1} onClick={handleDimmedClick} opacity={dimmedOpacity} />
-    </>
+    </div>
   );
 };
 
-export const CenteredModal = ({ content, zIndex, handleDimmedClick, dimmedOpacity }: ModalProps) => {
+export const CenteredModal = ({ content, zIndex, handleDimmedClick, dimmedOpacity, ...props }: ModalProps) => {
   const coreProps = { content, zIndex, handleDimmedClick };
   const styleProps = { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', dimmedOpacity };
-  return <Modal {...coreProps} {...styleProps} />;
+  return <Modal {...coreProps} {...styleProps} {...props} />;
 };
 
 const ModalContent = styled.div<{ zIndex: number; top?: string; left?: string; bottom?: string; right?: string; transform?: string }>`
