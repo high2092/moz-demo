@@ -9,6 +9,7 @@ import { QuizBundleListModalContent } from './QuizBundleListModal';
 import { Quiz, QuizType, QuizTypes } from '../type/quiz';
 import { useEffect, useRef, useState } from 'react';
 import YouTube from 'react-youtube';
+import { MUSIC_QUIZ_INFO_MODAL_THUMBNAIL_HEIGHT_PX, MUSIC_QUIZ_INFO_MODAL_THUMBNAIL_WIDTH_PX } from '../constants/style';
 
 export const QuizListModal = ({ zIndex }: PreparedModalProps) => {
   const dispatch = useAppDispatch();
@@ -89,15 +90,17 @@ export const QuizListModalContent = () => {
               {quizList.map((quiz) => {
                 const { id, question, answers, selected } = quiz;
                 return (
-                  <div style={{ background: selected ? 'orange' : 'initial', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} onMouseOver={(e) => handleQuizMouseOver(e, quiz)}>
-                    <div key={id} onClick={() => dispatch(toggleSelectQuiz(id))}>
-                      {id} {question} {answers[0].answer}
-                    </div>
-                    <div style={{ display: 'flex' }}>
-                      <S.DeleteButton onClick={() => handleEditButtonClick(quiz)}>수정</S.DeleteButton>
-                      <S.DeleteButton onClick={() => handleDeleteButtonClick(id)}>삭제</S.DeleteButton>
-                    </div>
-                  </div>
+                  <S.QuizContainer>
+                    <S.Quiz selected={selected} onMouseOver={(e) => handleQuizMouseOver(e, quiz)}>
+                      <div key={id} onClick={() => dispatch(toggleSelectQuiz(id))}>
+                        {id} {question} {answers[0].answer}
+                      </div>
+                      <div style={{ display: 'flex' }}>
+                        <S.DeleteButton onClick={() => handleEditButtonClick(quiz)}>수정</S.DeleteButton>
+                        <S.DeleteButton onClick={() => handleDeleteButtonClick(id)}>삭제</S.DeleteButton>
+                      </div>
+                    </S.Quiz>
+                  </S.QuizContainer>
                 );
               })}
             </div>
@@ -158,7 +161,7 @@ function QuizInfoModalQuestionInfo() {
 
   switch (type) {
     case QuizTypes.MUSIC: {
-      return videoId === null ? <div>Loading...</div> : <YouTube videoId={videoId} opts={{ width: 210, height: 105 }} />;
+      return videoId === null ? <div>Loading...</div> : <YouTube videoId={videoId} opts={{ width: MUSIC_QUIZ_INFO_MODAL_THUMBNAIL_WIDTH_PX, height: MUSIC_QUIZ_INFO_MODAL_THUMBNAIL_HEIGHT_PX }} />;
     }
     case QuizTypes.CONSONANT: {
       return <div>{question}</div>;
