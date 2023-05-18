@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SocketPayload, SocketPayloadTypes } from '../type/socket';
 import { Quiz, QuizTypes } from '../type/quiz';
 import { QuizBundle } from '../type/quizBundle';
-import { RoomDto } from '../type/Room';
+import { Room, RoomDto, RoomProfile } from '../type/Room';
 import { User } from '../type/user';
 
 interface MozState {
@@ -22,6 +22,8 @@ interface MozState {
 
   myProfile: User;
   roomInfo: RoomDto;
+
+  roomList: RoomProfile[];
 }
 
 const initialState: MozState = {
@@ -41,6 +43,8 @@ const initialState: MozState = {
 
   myProfile: null,
   roomInfo: null,
+
+  roomList: [],
 };
 
 export const mozSlice = createSlice({
@@ -147,8 +151,33 @@ export const mozSlice = createSlice({
       console.log(action.payload);
       state.myProfile = action.payload;
     },
+
+    fetchRoomList(state, action: PayloadAction<RoomProfile[]>) {
+      state.roomList = action.payload;
+    },
+
+    addRoom(state, action: PayloadAction<RoomProfile>) {
+      state.roomList.push(action.payload);
+    },
   },
 });
 
-export const { initSocket, receiveMessage, setIsReady, fetchQuiz, addQuiz, removeQuiz, addQuizBundle, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle, editQuiz, setIsQuizBundleModal, setHoveredQuiz, fetchProfile } =
-  mozSlice.actions;
+export const {
+  initSocket,
+  receiveMessage,
+  setIsReady,
+  fetchQuiz,
+  addQuiz,
+  removeQuiz,
+  addQuizBundle,
+  toggleSelectQuiz,
+  selectAll,
+  fetchQuizBundleList,
+  selectQuizBundle,
+  editQuiz,
+  setIsQuizBundleModal,
+  setHoveredQuiz,
+  fetchProfile,
+  fetchRoomList,
+  addRoom,
+} = mozSlice.actions;

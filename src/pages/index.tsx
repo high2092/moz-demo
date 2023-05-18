@@ -4,7 +4,7 @@ import { openModal } from '../features/modalSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ModalTypes } from '../type/modal';
 import { apiCaller, convertPayloadToChat, downloadFile, httpGet, httpPost } from '../util';
-import { fetchProfile, fetchQuiz, fetchQuizBundleList, initSocket, receiveMessage } from '../features/mozSlice';
+import { fetchProfile, fetchQuiz, fetchQuizBundleList, fetchRoomList, initSocket, receiveMessage } from '../features/mozSlice';
 import { useRouter } from 'next/router';
 import { ChattingInput } from '../components/ChattingInput';
 
@@ -39,10 +39,8 @@ async function httpGetQuizBundleList() {
 
 const Home = () => {
   const dispatch = useAppDispatch();
-  const { chatList, myProfile } = useAppSelector((state) => state.moz);
+  const { chatList, myProfile, roomList } = useAppSelector((state) => state.moz);
   const router = useRouter();
-
-  const [roomList, setRoomList] = useState([]);
 
   const loadInputRef = useRef<HTMLInputElement>(null);
 
@@ -52,26 +50,11 @@ const Home = () => {
   }, []);
 
   const handleRoomCreateButtonClick = async () => {
-    const roomProfile = {
-      name: '아무나',
-      capacity: 4,
-    };
-
-    const response = await httpPost('api/room', roomProfile);
-
-    if (!response.ok) {
-      return;
-    }
-
-    const id = await response.json();
-
-    setRoomList((roomList) => roomList.concat({ ...roomProfile, id }));
+    dispatch(openModal(ModalTypes.CREATE_ROOM));
   };
 
   const handleRoomClick = (id: number) => {
-    if (!roomList.find((room) => room.id === id).requirePassword) {
-      router.push(`/chat/${id}`);
-    }
+    router.push(`/chat/${id}`);
   };
 
   const handleExtractButtonClick = async () => {
@@ -105,7 +88,7 @@ const Home = () => {
   };
 
   const fetchData = () => {
-    httpGetRoomList().then(setRoomList);
+    httpGetRoomList().then((roomList) => dispatch(fetchRoomList(roomList)));
     httpGetQuizList().then((quizList) => dispatch(fetchQuiz(quizList)));
     httpGetQuizBundleList().then((quizBundleList) => dispatch(fetchQuizBundleList(quizBundleList)));
   };

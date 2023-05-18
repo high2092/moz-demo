@@ -3,6 +3,7 @@ import { ModalType, ModalTypes } from '../type/modal';
 import { AddQuizModal } from './AddQuizModal';
 import { CreateQuizBundleModal } from './CreateQuizBundleModal';
 import { CreateQuizModal } from './CreateQuizModal';
+import { CreateRoomModal } from './CreateRoomModal';
 import { QuizListModal } from './QuizListModal';
 
 type ModalComponents = {
@@ -14,6 +15,7 @@ const ModalComponents: ModalComponents = {
   [ModalTypes.ADD_QUIZ]: AddQuizModal,
   [ModalTypes.QUIZ_LIST]: QuizListModal,
   [ModalTypes.CREATE_QUIZ_BUNDLE]: CreateQuizBundleModal,
+  [ModalTypes.CREATE_ROOM]: CreateRoomModal,
 };
 
 const DEFAULT_MODAL_Z_INDEX = 1000;

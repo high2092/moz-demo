@@ -20,3 +20,9 @@ export interface RoomDto {
   totalRound: number;
   skipVotingCount: number;
 }
+
+export interface RoomProfile {
+  id: number;
+  name: string;
+  capacity: number;
+}
