@@ -13,6 +13,8 @@ interface MozState {
 
   selectedQuizBundle: QuizBundle;
   editingQuiz: Quiz;
+
+  isQuizBundleModal: boolean;
 }
 
 const initialState: MozState = {
@@ -25,6 +27,8 @@ const initialState: MozState = {
 
   selectedQuizBundle: null,
   editingQuiz: null,
+
+  isQuizBundleModal: true,
 };
 
 export const mozSlice = createSlice({
@@ -114,7 +118,11 @@ export const mozSlice = createSlice({
     editQuiz(state, action: PayloadAction<Quiz>) {
       state.editingQuiz = action.payload;
     },
+
+    setIsQuizBundleModal(state, action: PayloadAction<boolean>) {
+      state.isQuizBundleModal = action.payload;
+    },
   },
 });
 
-export const { initSocket, receiveMessage, setIsReady, fetchQuiz, addQuiz, removeQuiz, addQuizBundle, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle, editQuiz } = mozSlice.actions;
+export const { initSocket, receiveMessage, setIsReady, fetchQuiz, addQuiz, removeQuiz, addQuizBundle, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle, editQuiz, setIsQuizBundleModal } = mozSlice.actions;

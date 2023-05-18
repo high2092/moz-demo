@@ -4,22 +4,13 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { ModalTypes, PreparedModalProps } from '../type/modal';
 import { CenteredModal } from './Modal';
 import { httpDelete } from '../util';
-import { editQuiz, removeQuiz, selectAll, toggleSelectQuiz } from '../features/mozSlice';
+import { editQuiz, removeQuiz, selectAll, setIsQuizBundleModal, toggleSelectQuiz } from '../features/mozSlice';
 import { QuizBundleListModalContent } from './QuizBundleListModal';
 import { Quiz } from '../type/quiz';
 
 export const QuizListModal = ({ zIndex }: PreparedModalProps) => {
-  return (
-    <CenteredModal
-      content={
-        <div style={{ display: 'flex' }}>
-          <QuizListModalContent />
-          <QuizBundleListModalContent />
-        </div>
-      }
-      zIndex={zIndex}
-    />
-  );
+  const { isQuizBundleModal } = useAppSelector((state) => state.moz);
+  return <CenteredModal content={isQuizBundleModal ? <QuizBundleListModalContent /> : <QuizListModalContent />} zIndex={zIndex} />;
 };
 
 export const QuizListModalContent = () => {
@@ -62,7 +53,7 @@ export const QuizListModalContent = () => {
 
   return (
     <S.QuizListModal>
-      <div style={{ height: '60vh', overflow: 'scroll' }}>
+      <div style={{ height: '90%', overflow: 'scroll' }}>
         {quizList.map((quiz) => {
           const { id, question, answers, selected } = quiz;
           return (
@@ -83,6 +74,7 @@ export const QuizListModalContent = () => {
         <button onClick={handleSelectAllButtonClick}>전체 선택</button>
         <button onClick={handleCreateQuizBundleButtonClick}>문제집 생성</button>
       </div>
+      <button onClick={() => dispatch(setIsQuizBundleModal(true))}>문제집 목록 보기</button>
     </S.QuizListModal>
   );
 };
