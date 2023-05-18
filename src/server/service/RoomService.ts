@@ -11,6 +11,7 @@ import { getCurrentRoundQuiz } from '../utils/room';
 import { createRoundInfoSocketPayloads } from '../utils/socket';
 import { Quiz } from '../../type/quiz';
 import { shuffle } from '../utils/array';
+import { User } from '../../type/user';
 
 class RoomService {
   createRoom(name: string, capacity: number, quizList?: Quiz[]) {
@@ -61,6 +62,20 @@ class RoomService {
     dangerConcat(payloads, createSocketPayload(SocketPayloadTypes.SYSTEM, '게임 시작!'));
     dangerConcat(payloads, createRoundInfoSocketPayloads(room));
     return payloads;
+  }
+
+  quit(member: User) {
+    console.log(member.roomId);
+    if (!member.roomId) return;
+    const room = roomRepository.findById(member.roomId);
+    room.users = room.users.filter(({ id }) => id !== member.id);
+    member.roomId = null;
+    member.isReady = false;
+
+    if (room.users.length === 0) {
+      room.status = 'wait';
+      room.round = null;
+    }
   }
 }
 

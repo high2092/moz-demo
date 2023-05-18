@@ -167,6 +167,12 @@ export const mozSlice = createSlice({
     setInitialized(state, action: PayloadAction<boolean>) {
       state.initialized = action.payload;
     },
+
+    quitRoom(state) {
+      state.isReady = false;
+      state.currentRoundQuiz = null;
+      state.roomInfo = null;
+    },
   },
 });
 
@@ -189,4 +195,5 @@ export const {
   fetchRoomList,
   addRoom,
   setInitialized,
+  quitRoom,
 } = mozSlice.actions;

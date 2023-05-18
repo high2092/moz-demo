@@ -78,6 +78,14 @@ export const handlers = [
     return res(ctx.status(200), ctx.json(users));
   }),
 
+  rest.post('/api/room/quit', (req, res, ctx) => {
+    const memberId = getPrincipal();
+    const member = memberRepository.findById(memberId);
+    roomService.quit(member);
+
+    return res(ctx.status(200));
+  }),
+
   rest.post('/api/game/ready', (req, res, ctx) => {
     const memberId = getPrincipal();
     const member = memberRepository.findById(memberId);

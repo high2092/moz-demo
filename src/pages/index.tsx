@@ -4,7 +4,7 @@ import { openModal } from '../features/modalSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ModalTypes } from '../type/modal';
 import { apiCaller, convertPayloadToChat, downloadFile, httpGet, httpPost } from '../util';
-import { fetchProfile, fetchQuiz, fetchQuizBundleList, fetchRoomList, initSocket, receiveMessage, setInitialized } from '../features/mozSlice';
+import { fetchProfile, fetchQuiz, fetchQuizBundleList, fetchRoomList, initSocket, quitRoom, receiveMessage, setInitialized } from '../features/mozSlice';
 import { useRouter } from 'next/router';
 import { ChattingInput } from '../components/ChattingInput';
 
@@ -57,6 +57,11 @@ const Home = () => {
       .catch((error) => console.error(error));
 
     dispatch(setInitialized(true));
+  }, []);
+
+  useEffect(() => {
+    apiCaller(() => httpPost('api/room/quit'));
+    dispatch(quitRoom());
   }, []);
 
   const handleRoomCreateButtonClick = async () => {
