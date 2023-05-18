@@ -4,8 +4,9 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { ModalTypes, PreparedModalProps } from '../type/modal';
 import { CenteredModal } from './Modal';
 import { httpDelete } from '../util';
-import { removeQuiz, selectAll, toggleSelectQuiz } from '../features/mozSlice';
+import { editQuiz, removeQuiz, selectAll, toggleSelectQuiz } from '../features/mozSlice';
 import { QuizBundleListModalContent } from './QuizBundleListModal';
+import { Quiz } from '../type/quiz';
 
 export const QuizListModal = ({ zIndex }: PreparedModalProps) => {
   return (
@@ -54,6 +55,11 @@ export const QuizListModalContent = () => {
     dispatch(selectAll());
   };
 
+  const handleEditButtonClick = (quiz: Quiz) => {
+    dispatch(editQuiz(quiz));
+    dispatch(openModal(ModalTypes.CREATE_QUIZ));
+  };
+
   return (
     <S.QuizListModal>
       <div style={{ height: '60vh', overflow: 'scroll' }}>
@@ -64,7 +70,10 @@ export const QuizListModalContent = () => {
               <div key={id} onClick={() => dispatch(toggleSelectQuiz(id))}>
                 {id} {question} {answers[0].answer}
               </div>
-              <S.DeleteButton onClick={() => handleDeleteButtonClick(id)}>삭제</S.DeleteButton>
+              <div style={{ display: 'flex' }}>
+                <S.DeleteButton onClick={() => handleEditButtonClick(quiz)}>수정</S.DeleteButton>
+                <S.DeleteButton onClick={() => handleDeleteButtonClick(id)}>삭제</S.DeleteButton>
+              </div>
             </div>
           );
         })}

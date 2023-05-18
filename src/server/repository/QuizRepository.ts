@@ -10,9 +10,14 @@ class QuizRepository {
   }
 
   save(quiz: Quiz) {
-    const id = this.sequence++;
-    quiz.id = id;
-    this.quizzes[id] = quiz;
+    if (quiz.id) {
+      const { id } = quiz;
+      this.quizzes[id] = quiz;
+    } else {
+      const id = this.sequence++;
+      quiz.id = id;
+      this.quizzes[id] = quiz;
+    }
   }
 
   findAll() {

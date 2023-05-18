@@ -1,10 +1,10 @@
-import { httpPost } from '../util';
+import { apiCaller, httpPost, httpPut } from '../util';
 import { PreparedModalProps } from '../type/modal';
 import { Quiz, QuizType, QuizTypes } from '../type/quiz';
 import * as S from './CreateQuizModal.style';
 import { CenteredModal } from './Modal';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
-import { useAppDispatch } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 import { addQuiz } from '../features/mozSlice';
 import { RadioGroup } from './RadioGroup';
 import { useEffect, useState } from 'react';
@@ -15,11 +15,24 @@ export const CreateQuizModal = ({ zIndex }: PreparedModalProps) => {
 
 function CreateQuizModalContent() {
   const dispatch = useAppDispatch();
-  const { register, handleSubmit, control } = useForm();
+  const { editingQuiz } = useAppSelector((state) => state.moz);
+  const { register, handleSubmit, control, setValue } = useForm();
   const { fields, append, remove } = useFieldArray({ control, name: 'answers' });
 
   const [quizType, setQuizType] = useState<QuizType>(QuizTypes.CONSONANT);
   const [videoId, setVideoId] = useState('');
+
+  useEffect(() => {
+    if (editingQuiz) {
+      setQuizType(editingQuiz.type);
+
+      setValue('consonant', editingQuiz.question);
+      setVideoId(editingQuiz.question);
+      editingQuiz.answers.forEach(({ answer, score }) => append({ answer, score }));
+    } else {
+      append({ answer: '', score: 5 });
+    }
+  }, []);
 
   const getQuestion = (type: QuizType, { consonant, videoId }) => {
     switch (type) {
@@ -33,16 +46,16 @@ function CreateQuizModalContent() {
   const handleCreateQuiz = async (formData: FieldValues) => {
     const { consonant, answers } = formData;
     const quiz: Quiz = { type: quizType, question: getQuestion(quizType, { consonant, videoId }), answers };
-    const response = await httpPost('api/quiz', quiz);
 
-    if (!response.ok) {
-      console.error(response.statusText);
-      return;
+    if (editingQuiz) {
+      const { id } = editingQuiz;
+      await apiCaller(() => httpPut(`api/quiz/${id}`, quiz));
+      dispatch(addQuiz({ ...quiz, id }));
+      alert('저장되었습니다.');
+    } else {
+      const id = await apiCaller(() => httpPost('api/quiz', quiz));
+      dispatch(addQuiz({ ...quiz, id }));
     }
-
-    const { id } = await response.json();
-
-    dispatch(addQuiz({ ...quiz, id }));
   };
 
   const handleVideoIdInputChange = (e: React.ChangeEvent) => {
@@ -59,10 +72,6 @@ function CreateQuizModalContent() {
 
     setVideoId(videoId);
   };
-
-  useEffect(() => {
-    append({ answer: '', score: 5 });
-  }, []);
 
   const handleAddAnswerButtonClick = () => {
     const MAX_ANSWER_COUNT = 5;
@@ -85,6 +94,7 @@ function CreateQuizModalContent() {
           ]}
           currentValue={quizType}
           setCurrentValue={(value: QuizType) => setQuizType(value)}
+          disabled={!!editingQuiz}
         />
 
         {quizType === QuizTypes.CONSONANT && <input {...register('consonant')} placeholder="초성" />}
@@ -113,7 +123,7 @@ function CreateQuizModalContent() {
           ))}
         </S.AnswerSection>
 
-        <button>퀴즈 생성</button>
+        <button>{editingQuiz ? '저장' : '퀴즈 생성'}</button>
       </S.CreateQuizForm>
     </S.CreateQuizModal>
   );

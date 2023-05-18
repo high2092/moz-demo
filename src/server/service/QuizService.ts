@@ -8,6 +8,10 @@ class QuizService {
     return quiz.id;
   }
 
+  updateQuiz(quiz: Quiz) {
+    quizRepository.save(quiz);
+  }
+
   deleteQuiz(id: number) {
     quizRepository.deleteById(id);
   }

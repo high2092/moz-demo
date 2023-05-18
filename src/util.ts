@@ -45,6 +45,18 @@ export async function httpPost(path: string, payload?: Record<string, any>) {
   return response;
 }
 
+export async function httpPut(path: string, payload?: Record<string, any>) {
+  const response = await fetch(`${HOST}/${path}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload ?? {}),
+  });
+  return response;
+}
+
 export async function httpDelete(path: string) {
   const response = await fetch(`${HOST}/${path}`, { method: 'DELETE', credentials: 'include' });
   return response;

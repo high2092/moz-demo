@@ -25,6 +25,13 @@ export const handlers = [
     return res(ctx.status(200), ctx.json({ id }));
   }),
 
+  rest.put('/api/quiz/:id', async (req, res, ctx) => {
+    const id = Number(req.params.id);
+    const { type, question, answers } = await req.json();
+    quizService.updateQuiz({ id, type, question, answers });
+    return res(ctx.status(200));
+  }),
+
   rest.delete('/api/quiz/:id', (req, res, ctx) => {
     const id = Number(req.params.id);
     quizService.deleteQuiz(id);

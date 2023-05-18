@@ -10,7 +10,8 @@ interface RadioGroupProps {
   options: RadioOption[];
   currentValue: string;
   setCurrentValue: (value: string) => void;
-  style: CSSProperties;
+  style?: CSSProperties;
+  disabled?: boolean;
 }
 
 export const RadioGroup = ({ name, options, currentValue, setCurrentValue, ...props }: RadioGroupProps) => {

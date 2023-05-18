@@ -12,6 +12,7 @@ interface MozState {
   quizBundles: Record<number, QuizBundle>;
 
   selectedQuizBundle: QuizBundle;
+  editingQuiz: Quiz;
 }
 
 const initialState: MozState = {
@@ -23,6 +24,7 @@ const initialState: MozState = {
   quizBundles: {},
 
   selectedQuizBundle: null,
+  editingQuiz: null,
 };
 
 export const mozSlice = createSlice({
@@ -108,7 +110,11 @@ export const mozSlice = createSlice({
         state.selectedQuizBundle = state.quizBundles[id];
       }
     },
+
+    editQuiz(state, action: PayloadAction<Quiz>) {
+      state.editingQuiz = action.payload;
+    },
   },
 });
 
-export const { initSocket, receiveMessage, setIsReady, fetchQuiz, addQuiz, removeQuiz, addQuizBundle, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle } = mozSlice.actions;
+export const { initSocket, receiveMessage, setIsReady, fetchQuiz, addQuiz, removeQuiz, addQuizBundle, toggleSelectQuiz, selectAll, fetchQuizBundleList, selectQuizBundle, editQuiz } = mozSlice.actions;
